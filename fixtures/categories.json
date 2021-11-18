@@ -1,0 +1,42 @@
+[
+  {
+    "model": "mainapp.category",
+    "pk": 1,
+    "fields": {
+      "name": "Новинки",
+      "desc": "Описание новинок"
+    }
+  },
+  {
+    "model": "mainapp.category",
+    "pk": 2,
+    "fields": {
+      "name": "Одежда",
+      "desc": "Описание категории одежда"
+    }
+  },
+  {
+    "model": "mainapp.category",
+    "pk": 3,
+    "fields": {
+      "name": "Обувь",
+      "desc": "Описание категории обуви"
+    }
+  },
+  {
+    "model": "mainapp.category",
+    "pk": 4,
+    "fields": {
+      "name": "Аксессуары",
+      "desc": ""
+    }
+  },
+  {
+    "model": "mainapp.category",
+    "pk": 5,
+    "fields": {
+      "name": "Подарки",
+      "desc": ""
+    }
+  }
+]
