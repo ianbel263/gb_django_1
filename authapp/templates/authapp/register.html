@@ -1,0 +1,30 @@
+{% extends 'authapp/base.html' %}
+
+{% block content %}
+    <div class="card shadow-lg border-0 rounded-lg mt-5">
+        <div class="card-header"><h3 class="text-center font-weight-light my-4">Создать аккаунт</h3>
+        </div>
+        <div class="card-body">
+            <form action="{% url 'authapp:register' %}" method="post">
+                {% csrf_token %}
+                {% for field in form %}
+                    {% cycle '<div class="form-row">' '' %}
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="small mb-1"
+                                   for="{{ form.first_name.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                        </div>
+                    </div>
+                    {% cycle '' '</div>' %}
+                {% endfor %}
+                <div class="form-group mt-4 mb-0">
+                    <input class="btn btn-primary btn-block" type="submit" value="Создать аккаунт">
+                </div>
+            </form>
+        </div>
+        <div class="card-footer text-center">
+            <div class="small"><a href="{% url 'authapp:login' %}">Уже есть аккаунт? Авторизоваться</a></div>
+        </div>
+    </div>
+{% endblock %}
