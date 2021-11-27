@@ -43,6 +43,14 @@ def login(request):
     return render(request, 'authapp/login.html', context)
 
 
+def profile(request):
+    context = {
+        'title': 'GeekShop - Профиль пользователя',
+    }
+
+    return render(request, 'authapp/profile.html', context)
+
+
 def logout(request):
     auth.logout(request)
     return render(request, 'mainapp/index.html')
