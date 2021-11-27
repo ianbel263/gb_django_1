@@ -1,4 +1,5 @@
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django import forms
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, UserChangeForm
 
 from authapp.models import User
 
@@ -20,6 +21,45 @@ class UserLoginForm(AuthenticationForm):
         self.fields['password'].widget.attrs['placeholder'] = 'Введите пароль'
         for field in self.fields.values():
             field.widget.attrs['class'] = 'form-control py-4'
+
+
+class UserProfileForm(UserChangeForm):
+    image = forms.ImageField(widget=forms.FileInput(), required=False)
+    age = forms.IntegerField(widget=forms.NumberInput(), required=False)
+
+    class Meta:
+        model = User
+        fields = [
+            'first_name',
+            'last_name',
+            'image',
+            'username',
+            'email',
+            'age'
+        ]
+
+    def __init__(self, *args, **kwargs):
+        super(UserChangeForm, self).__init__(*args, **kwargs)
+        self.fields['first_name'].label = 'Имя'
+        self.fields['last_name'].label = 'Фамилия'
+        self.fields['username'].label = 'Имя пользователя'
+        self.fields['email'].label = 'Адрес электронной почты'
+        self.fields['image'].label = 'Выберите изображение'
+        self.fields['age'].label = 'Возраст'
+
+        # self.fields['username'].widget.attrs['placeholder'] = 'Введите имя пользователя'
+        # self.fields['email'].widget.attrs['placeholder'] = 'Введите e-mail'
+        self.fields['first_name'].widget.attrs['placeholder'] = 'Введите имя'
+        self.fields['last_name'].widget.attrs['placeholder'] = 'Введите фамилию'
+        self.fields['image'].widget.attrs['placeholder'] = 'Выберите изображение'
+        self.fields['age'].widget.attrs['placeholder'] = 'Введите Ваш возраст'
+
+        self.fields['username'].widget.attrs['readonly'] = True
+        self.fields['email'].widget.attrs['readonly'] = True
+        self.fields['first_name'].widget.attrs['autofocus'] = True
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'form-control py-4'
+        self.fields['image'].widget.attrs['class'] = 'custom-file-input'
 
 
 class UserRegisterForm(UserCreationForm):
