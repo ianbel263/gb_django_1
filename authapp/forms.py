@@ -4,23 +4,50 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, User
 from authapp.models import User
 
 
+def update_widgets(fields):
+    labels = {
+        'first_name': 'Имя',
+        'last_name': 'Фамилия',
+        'image': 'Загрузите аватар',
+        'username': 'Имя пользователя',
+        'email': 'Адрес электронной почты',
+        'age': 'Возраст',
+        'password': 'Пароль',
+        'password1': 'Пароль',
+        'password2': 'Подтверждение пароля'
+    }
+
+    placeholders = {
+        'first_name': 'Введите имя',
+        'last_name': 'Введите фамилию',
+        'image': 'Загрузите аватар',
+        'username': 'Введите имя пользователя',
+        'email': 'Введите email',
+        'age': 'Введите Ваш возраст',
+        'password': 'Введите пароль',
+        'password1': 'Введите пароль',
+        'password2': 'Подтвердите пароль'
+    }
+
+    for name, field in fields.items():
+        field.widget.attrs['class'] = 'form-control py-4'
+        if name in labels:
+            field.label = labels[name]
+        if name in placeholders:
+            field.widget.attrs['placeholder'] = placeholders[name]
+
+
 class UserLoginForm(AuthenticationForm):
     class Meta:
         model = User
-        fields = [
+        fields = (
             'username',
-            'password'
-        ]
+            'password',
+        )
 
     def __init__(self, *args, **kwargs):
         super(UserLoginForm, self).__init__(*args, **kwargs)
-        self.fields['username'].label = 'Имя пользователя'
-        self.fields['password'].label = 'Пароль'
-
-        self.fields['username'].widget.attrs['placeholder'] = 'Введите имя пользователя'
-        self.fields['password'].widget.attrs['placeholder'] = 'Введите пароль'
-        for field in self.fields.values():
-            field.widget.attrs['class'] = 'form-control py-4'
+        update_widgets(self.fields)
 
 
 class UserProfileForm(UserChangeForm):
@@ -29,66 +56,37 @@ class UserProfileForm(UserChangeForm):
 
     class Meta:
         model = User
-        fields = [
+        fields = (
             'first_name',
             'last_name',
             'image',
             'username',
             'email',
-            'age'
-        ]
+            'age',
+        )
 
     def __init__(self, *args, **kwargs):
         super(UserChangeForm, self).__init__(*args, **kwargs)
-        self.fields['first_name'].label = 'Имя'
-        self.fields['last_name'].label = 'Фамилия'
-        self.fields['username'].label = 'Имя пользователя'
-        self.fields['email'].label = 'Адрес электронной почты'
-        self.fields['image'].label = 'Выберите изображение'
-        self.fields['age'].label = 'Возраст'
-
-        # self.fields['username'].widget.attrs['placeholder'] = 'Введите имя пользователя'
-        # self.fields['email'].widget.attrs['placeholder'] = 'Введите e-mail'
-        self.fields['first_name'].widget.attrs['placeholder'] = 'Введите имя'
-        self.fields['last_name'].widget.attrs['placeholder'] = 'Введите фамилию'
-        self.fields['image'].widget.attrs['placeholder'] = 'Выберите изображение'
-        self.fields['age'].widget.attrs['placeholder'] = 'Введите Ваш возраст'
-
         self.fields['username'].widget.attrs['readonly'] = True
         self.fields['email'].widget.attrs['readonly'] = True
         self.fields['first_name'].widget.attrs['autofocus'] = True
-        for field in self.fields.values():
-            field.widget.attrs['class'] = 'form-control py-4'
+        update_widgets(self.fields)
         self.fields['image'].widget.attrs['class'] = 'custom-file-input'
 
 
 class UserRegisterForm(UserCreationForm):
     class Meta:
         model = User
-        fields = [
+        fields = (
             'first_name',
             'last_name',
             'username',
             'email',
             'password1',
-            'password2'
-        ]
+            'password2',
+        )
 
     def __init__(self, *args, **kwargs):
         super(UserRegisterForm, self).__init__(*args, **kwargs)
-        self.fields['first_name'].label = 'Имя'
-        self.fields['last_name'].label = 'Фамилия'
-        self.fields['username'].label = 'Имя пользователя'
-        self.fields['email'].label = 'Адрес электронной почты'
-        self.fields['password1'].label = 'Пароль'
-        self.fields['password2'].label = 'Подтверждение пароля'
-
-        self.fields['username'].widget.attrs['placeholder'] = 'Введите имя пользователя'
-        self.fields['email'].widget.attrs['placeholder'] = 'Введите e-mail'
-        self.fields['first_name'].widget.attrs['placeholder'] = 'Введите имя'
-        self.fields['last_name'].widget.attrs['placeholder'] = 'Введите фамилию'
-        self.fields['password1'].widget.attrs['placeholder'] = 'Введите пароль'
-        self.fields['password2'].widget.attrs['placeholder'] = 'Подтвердите пароль'
         self.fields['first_name'].widget.attrs['autofocus'] = True
-        for field in self.fields.values():
-            field.widget.attrs['class'] = 'form-control py-4'
+        update_widgets(self.fields)
