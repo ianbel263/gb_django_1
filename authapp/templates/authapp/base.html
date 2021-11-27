@@ -19,15 +19,21 @@
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-lg-5">
-                        {% if form.errors %}
-                            <div class="alert alert-warning alert-dismissible fade show" role="alert"
-                                 style="margin-top: 50px;">
-                                {% for key, value in form.errors.items %}
-                                    <strong>{{ key }}</strong>{{ value }}
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                {% endfor %}
+                        {% if form.errors or messages %}
+                            <div class="alert {% if form.errors %} alert-warning {% else %} alert-success {% endif %}
+                                alert-dismissible fade show" role="alert" style="margin-top: 50px;">
+                                {% if messages %}
+                                    {% for message in messages %}
+                                        {{ message }}
+                                    {% endfor %}
+                                {% else %}
+                                    {% for key, value in form.errors.items %}
+                                        <strong>{{ key }}</strong>{{ value }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    {% endfor %}
+                                {% endif %}
                             </div>
                         {% endif %}
 
