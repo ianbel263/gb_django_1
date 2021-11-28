@@ -1,34 +1,34 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, UserChangeForm
 from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from authapp.models import User
 
 
 def update_widgets(fields):
     labels = {
-        'first_name': 'Имя',
-        'last_name': 'Фамилия',
-        'image': 'Загрузите аватар',
-        'username': 'Имя пользователя',
-        'email': 'Адрес электронной почты',
-        'age': 'Возраст',
-        'password': 'Пароль',
-        'password1': 'Пароль',
-        'password2': 'Подтверждение пароля'
+        'first_name': _('Name'),
+        'last_name': _('Surname'),
+        'image': _('Upload avatar'),
+        'username': _('Username'),
+        'email': _('Email'),
+        'age': _('Age'),
+        'password': _('Password'),
+        'password1': _('Password'),
+        'password2': _('Confirm password')
     }
 
     placeholders = {
-        'first_name': 'Введите имя',
-        'last_name': 'Введите фамилию',
-        'image': 'Загрузите аватар',
-        'username': 'Введите имя пользователя',
-        'email': 'Введите email',
-        'age': 'Введите Ваш возраст',
-        'password': 'Введите пароль',
-        'password1': 'Введите пароль',
-        'password2': 'Подтвердите пароль'
+        'first_name': _('Enter name'),
+        'last_name': _('Enter surname'),
+        'image': _('Upload avatar'),
+        'username': _('Enter username'),
+        'email': _('Enter e-mail'),
+        'age': _('Enter your age'),
+        'password': _('Enter password'),
+        'password1': _('Enter password'),
+        'password2': _('Confirm password')
     }
 
     for name, field in fields.items():
