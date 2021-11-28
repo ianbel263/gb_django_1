@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, UserChangeForm
 from django.core.exceptions import ValidationError
+from django.utils.translation import ugettext_lazy as _
 
 from authapp.models import User
 
@@ -55,6 +56,10 @@ class UserProfileForm(UserChangeForm):
     image = forms.ImageField(widget=forms.FileInput(), required=False)
     age = forms.IntegerField(widget=forms.NumberInput(), required=False)
 
+    error_messages = {
+        'age_mismatch': _('The age must be at least 18 years old.'),
+    }
+
     class Meta:
         model = User
         fields = (
@@ -77,7 +82,10 @@ class UserProfileForm(UserChangeForm):
     def clean_age(self):
         age = self.cleaned_data['age']
         if age < 18:
-            raise ValidationError('Возраст не должен быть менее 18')
+            raise ValidationError(
+                self.error_messages['age_mismatch'],
+                code='age_mismatch'
+            )
         return age
 
 

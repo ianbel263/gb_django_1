@@ -2,8 +2,14 @@ from django.contrib import auth, messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.utils.translation import ugettext as _
 
 from authapp.forms import UserLoginForm, UserRegisterForm, UserProfileForm
+
+success_messages = {
+    'register': _('You have successfully registered'),
+    'profile': _('Changes saved successfully')
+}
 
 
 def register(request):
@@ -11,7 +17,7 @@ def register(request):
         form = UserRegisterForm(data=request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Вы успешно зарегистрировались.')
+            messages.success(request, success_messages['register'])
             return HttpResponseRedirect(reverse('authapp:login'))
     else:
         form = UserRegisterForm()
@@ -48,7 +54,7 @@ def profile(request):
         form = UserProfileForm(instance=request.user, data=request.POST, files=request.FILES)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Изменения успешно сохранены.')
+            messages.success(request, success_messages['profile'])
     else:
         form = UserProfileForm(instance=request.user)
     context = {
