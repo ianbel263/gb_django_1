@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 
 from authapp.forms import UserLoginForm, UserRegisterForm, UserProfileForm
+from basketapp.models import Basket
 
 success_messages = {
     'register': _('You have successfully registered'),
@@ -59,7 +60,8 @@ def profile(request):
         form = UserProfileForm(instance=request.user)
     context = {
         'title': 'GeekShop - Профиль пользователя',
-        'form': form
+        'form': form,
+        'baskets': Basket.objects.filter(user=request.user)
     }
     return render(request, 'authapp/profile.html', context)
 
