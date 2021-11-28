@@ -48,15 +48,13 @@ def profile(request):
         form = UserProfileForm(instance=request.user, data=request.POST, files=request.FILES)
         if form.is_valid():
             form.save()
-        else:
-            print(form.errors)
+            messages.success(request, 'Изменения успешно сохранены.')
     else:
         form = UserProfileForm(instance=request.user)
     context = {
         'title': 'GeekShop - Профиль пользователя',
         'form': form
     }
-
     return render(request, 'authapp/profile.html', context)
 
 
