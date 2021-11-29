@@ -131,3 +131,4 @@ LOCALE_PATHS = [BASE_DIR / 'locale']
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'authapp.User'
+LOGIN_URL = '/users/login/'
