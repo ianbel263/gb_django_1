@@ -18,3 +18,13 @@ def products(request):
         'products': Product.objects.all()
     }
     return render(request, 'mainapp/products.html', context)
+
+
+def detail(request, product_id):
+    product = Product.objects.get(id=product_id)
+    context = {
+        'title': f'GeekShop - {product.name}',
+        'product': product
+    }
+    return render(request, 'mainapp/detail.html', context)
+
