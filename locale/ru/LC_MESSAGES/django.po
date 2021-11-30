@@ -1,0 +1,89 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-11-28 06:27+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
+"%100>=11 && n%100<=14)? 2 : 3);\n"
+
+#: authapp/forms.py:11
+msgid "Name"
+msgstr "Имя"
+
+#: authapp/forms.py:12
+msgid "Surname"
+msgstr "Фамилия"
+
+#: authapp/forms.py:13 authapp/forms.py:25
+msgid "Upload avatar"
+msgstr "Загрузите аватар"
+
+#: authapp/forms.py:14
+msgid "Username"
+msgstr "Имя пользователя"
+
+#: authapp/forms.py:15
+msgid "Email"
+msgstr "Электронная почта"
+
+#: authapp/forms.py:16
+msgid "Age"
+msgstr "Возраст"
+
+#: authapp/forms.py:17 authapp/forms.py:18
+msgid "Password"
+msgstr "Пароль"
+
+#: authapp/forms.py:19 authapp/forms.py:31
+msgid "Confirm password"
+msgstr "Подтвердите пароль"
+
+#: authapp/forms.py:23
+msgid "Enter name"
+msgstr "Введите имя"
+
+#: authapp/forms.py:24
+msgid "Enter surname"
+msgstr "Введите фамилию"
+
+#: authapp/forms.py:26
+msgid "Enter username"
+msgstr "Введите имя пользователя"
+
+#: authapp/forms.py:27
+msgid "Enter e-mail"
+msgstr "Введите адрес эл.почты"
+
+#: authapp/forms.py:28
+msgid "Enter your age"
+msgstr "Введите Ваш возраст"
+
+#: authapp/forms.py:29 authapp/forms.py:30
+msgid "Enter password"
+msgstr "Введите пароль"
+
+#: authapp/forms.py:60
+msgid "The age must be at least 18 years old."
+msgstr "Возраст не должен быть менее 18 лет"
+
+#: authapp/views.py:10
+msgid "You have successfully registered"
+msgstr "Вы успешно зарегистрированы"
+
+#: authapp/views.py:11
+msgid "Changes saved successfully"
+msgstr "Изменения успешно сохранены"
