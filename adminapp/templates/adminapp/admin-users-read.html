@@ -25,7 +25,7 @@
                                 </thead>
                                 <tbody>
                                 {% for user in users %}
-                                    <tr>
+                                    <tr class="{% if not user.is_active %} non_active {% endif %}">
                                         <td><a href="{% url 'adminapp:user_update' user.id %}"
                                                style="color: dodgerblue">{{ user.username }}</a></td>
                                         <td>{{ user.first_name }}</td>
