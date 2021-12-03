@@ -1,9 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, UserChangeForm
-from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 from authapp.models import User
+from authapp.validate import validate_age
 
 
 def update_widgets(fields):
@@ -57,11 +57,7 @@ class UserLoginForm(AuthenticationForm):
 
 class UserProfileForm(UserChangeForm):
     image = forms.ImageField(widget=forms.FileInput(), required=False)
-    age = forms.IntegerField(widget=forms.NumberInput(), required=False)
-
-    error_messages = {
-        'age_mismatch': _('The age must be at least 18 years old.'),
-    }
+    age = forms.IntegerField(widget=forms.NumberInput(), required=False, validators=[validate_age])
 
     class Meta:
         model = User
@@ -80,15 +76,6 @@ class UserProfileForm(UserChangeForm):
         self.fields['email'].widget.attrs['readonly'] = True
         self.fields['first_name'].widget.attrs['autofocus'] = True
         update_widgets(self.fields)
-
-    def clean_age(self):
-        age = self.cleaned_data['age']
-        if age < 18:
-            raise ValidationError(
-                self.error_messages['age_mismatch'],
-                code='age_mismatch'
-            )
-        return age
 
 
 class UserRegisterForm(UserCreationForm):
