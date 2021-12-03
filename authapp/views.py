@@ -58,7 +58,7 @@ def profile(request):
     title = 'GeekShop - Профиль пользователя'
     if request.method == 'POST':
         form = UserProfileForm(instance=request.user, data=request.POST, files=request.FILES)
-        if form.is_valid():
+        if form.is_valid() and form.changed_data:
             form.save()
             messages.success(request, success_messages['profile'])
     else:
