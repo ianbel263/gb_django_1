@@ -1,29 +1,32 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from .models import Category, Product
 
 
 # Create your views here.
 def index(request):
+    title = 'GeekShop'
     context = {
-        'title': 'GeekShop'
+        'title': title
     }
     return render(request, 'mainapp/index.html', context)
 
 
 def products(request):
+    title = 'GeekShop - Каталог'
     context = {
-        'title': 'GeekShop - Каталог',
+        'title': title,
         'categories': Category.objects.all(),
         'products': Product.objects.all()
     }
     return render(request, 'mainapp/products.html', context)
 
 
-def detail(request, product_id):
-    product = Product.objects.get(id=product_id)
+def detail(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    title = f'GeekShop - {product.name}'
     context = {
-        'title': f'GeekShop - {product.name}',
+        'title': title,
         'product': product
     }
     return render(request, 'mainapp/detail.html', context)

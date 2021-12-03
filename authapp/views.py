@@ -15,6 +15,7 @@ success_messages = {
 
 
 def register(request):
+    title = 'GeekShop - Регистрация'
     if request.method == 'POST':
         form = UserRegisterForm(data=request.POST)
         if form.is_valid():
@@ -25,13 +26,14 @@ def register(request):
         form = UserRegisterForm()
 
     context = {
-        'title': 'GeekShop - Регистрация',
-        'form': form,
+        'title': title,
+        'form': form
     }
     return render(request, 'authapp/register.html', context)
 
 
 def login(request):
+    title = 'GeekShop - Авторизация'
     if request.method == 'POST':
         form = UserLoginForm(data=request.POST)
         if form.is_valid():
@@ -45,14 +47,15 @@ def login(request):
         form = UserLoginForm()
 
     context = {
-        'title': 'GeekShop - Авторизация',
-        'form': form,
+        'title': title,
+        'form': form
     }
     return render(request, 'authapp/login.html', context)
 
 
 @login_required
 def profile(request):
+    title = 'GeekShop - Профиль пользователя'
     if request.method == 'POST':
         form = UserProfileForm(instance=request.user, data=request.POST, files=request.FILES)
         if form.is_valid():
@@ -61,7 +64,7 @@ def profile(request):
     else:
         form = UserProfileForm(instance=request.user)
     context = {
-        'title': 'GeekShop - Профиль пользователя',
+        'title': title,
         'form': form,
         'baskets': Basket.objects.filter(user=request.user)
     }
