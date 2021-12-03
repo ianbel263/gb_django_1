@@ -1,6 +1,6 @@
 from django import forms
 
-from authapp.forms import UserRegisterForm
+from authapp.forms import UserRegisterForm, UserProfileForm
 from authapp.models import User
 from authapp.validate import validate_age
 
@@ -21,3 +21,10 @@ class UserCreateForm(UserRegisterForm):
             'password1',
             'password2',
         )
+
+
+class UserUpdateForm(UserProfileForm):
+    def __init__(self, *args, **kwargs):
+        super(UserUpdateForm, self).__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs['readonly'] = False
+        self.fields['email'].widget.attrs['readonly'] = False

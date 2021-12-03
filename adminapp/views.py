@@ -1,11 +1,11 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 # Create your views here.
 from django.urls import reverse
 
-from adminapp.forms import UserCreateForm
+from adminapp.forms import UserCreateForm, UserUpdateForm
 from authapp.models import User
 
 
@@ -45,9 +45,32 @@ def user_create(request):
 
 @user_passes_test(lambda user: user.is_superuser)
 def user_update(request, pk):
-    return render(request, 'adminapp/admin-users-update-delete.html')
+    current_user = get_object_or_404(User, pk=pk)
+    title = f'Geekshop - Редактирование пользователя - {current_user.username}'
+    if request.method == 'POST':
+        form = UserUpdateForm(data=request.POST, files=request.FILES, instance=current_user)
+        if form.is_valid():
+            if form.changed_data:
+                form.save()
+                messages.success(request, f'Пользователь {current_user.username} обновлен')
+            else:
+                messages.success(request, 'Вы ничего не изменили')
+            return HttpResponseRedirect(reverse('adminapp:users'))
+    else:
+        form = UserUpdateForm(instance=current_user)
+    context = {
+        'title': title,
+        'form': form,
+        'user': current_user
+    }
+    return render(request, 'adminapp/admin-users-update-delete.html', context)
 
 
 @user_passes_test(lambda user: user.is_superuser)
 def user_delete(request, pk):
-    return render(request, 'adminapp/admin-users-update-delete.html')
+    if request.method == 'POST':
+        current_user = get_object_or_404(User, pk=pk)
+        current_user.is_active = False
+        current_user.save()
+        messages.success(request, 'Пользователь успешно удален')
+    return HttpResponseRedirect(reverse('adminapp:users'))

@@ -71,7 +71,7 @@ class UserProfileForm(UserChangeForm):
         )
 
     def __init__(self, *args, **kwargs):
-        super(UserChangeForm, self).__init__(*args, **kwargs)
+        super(UserProfileForm, self).__init__(*args, **kwargs)
         self.fields['username'].widget.attrs['readonly'] = True
         self.fields['email'].widget.attrs['readonly'] = True
         self.fields['first_name'].widget.attrs['autofocus'] = True
@@ -91,6 +91,6 @@ class UserRegisterForm(UserCreationForm):
         )
 
     def __init__(self, *args, **kwargs):
-        super(UserCreationForm, self).__init__(*args, **kwargs)
+        super(UserRegisterForm, self).__init__(*args, **kwargs)
         self.fields['first_name'].widget.attrs['autofocus'] = True
         update_widgets(self.fields)
