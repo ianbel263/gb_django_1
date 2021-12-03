@@ -32,7 +32,10 @@ def update_widgets(fields):
     }
 
     for name, field in fields.items():
-        field.widget.attrs['class'] = 'form-control py-4'
+        if name == 'image':
+            field.widget.attrs['class'] = 'custom-file-input'
+        else:
+            field.widget.attrs['class'] = 'form-control py-4'
         if name in labels:
             field.label = labels[name]
         if name in placeholders:
@@ -77,7 +80,6 @@ class UserProfileForm(UserChangeForm):
         self.fields['email'].widget.attrs['readonly'] = True
         self.fields['first_name'].widget.attrs['autofocus'] = True
         update_widgets(self.fields)
-        self.fields['image'].widget.attrs['class'] = 'custom-file-input'
 
     def clean_age(self):
         age = self.cleaned_data['age']
@@ -102,6 +104,6 @@ class UserRegisterForm(UserCreationForm):
         )
 
     def __init__(self, *args, **kwargs):
-        super(UserRegisterForm, self).__init__(*args, **kwargs)
+        super(UserCreationForm, self).__init__(*args, **kwargs)
         self.fields['first_name'].widget.attrs['autofocus'] = True
         update_widgets(self.fields)

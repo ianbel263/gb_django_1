@@ -1,6 +1,11 @@
+from django.contrib import messages
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
 # Create your views here.
+from django.urls import reverse
+
+from adminapp.forms import UserCreateForm
 from authapp.models import User
 
 
@@ -19,7 +24,20 @@ def users(request):
 
 
 def user_create(request):
-    return render(request, 'adminapp/admin-users-create.html')
+    title = 'Geekshop - Создание пользователя'
+    if request.method == 'POST':
+        form = UserCreateForm(data=request.POST, files=request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Пользователь добавлен')
+            return HttpResponseRedirect(reverse('adminapp:users'))
+    else:
+        form = UserCreateForm()
+    context = {
+        'title': title,
+        'form': form
+    }
+    return render(request, 'adminapp/admin-users-create.html', context)
 
 
 def user_update(request, pk):
