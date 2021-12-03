@@ -44,9 +44,9 @@ def update_basket(request):
         return JsonResponse({
             'basketID': basket_id,
             'quantity': quantity,
-            'price': basket.get_sum(),
-            'totalPrice': basket.get_total_sum(),
-            'totalQuantity': basket.get_total_quantity()
+            'price': basket.total_price,
+            'totalPrice': basket.total_all_price,
+            'totalQuantity': basket.total_quantity
         })
     else:
         return HttpResponseRedirect(reverse('index'))
