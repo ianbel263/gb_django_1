@@ -1,0 +1,13 @@
+.main_wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.main_wrapper__top {
+    flex: 1 0 auto;
+}
+
+.main_wrapper__bottom {
+    flex: 0 0 auto;
+}
