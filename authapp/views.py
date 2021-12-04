@@ -65,6 +65,7 @@ def profile(request):
         if form.is_valid() and form.changed_data:
             form.save()
             messages.success(request, success_messages['profile'])
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     else:
         form = UserProfileForm(instance=request.user)
     context = {
