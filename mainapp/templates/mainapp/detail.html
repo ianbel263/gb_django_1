@@ -27,6 +27,14 @@
                             <li class="list-group-item">{{ product.price }} руб</li>
                             <li class="list-group-item">В наличии: {{ product.quantity }}</li>
                         </ul>
+                        <div class="card-footer text-center">
+                            <a
+                                    id="add_basket"
+                                    data-id="{{ product.id }}"
+                                    class="btn btn-outline-success">Отправить в корзину
+                            </a>
+                        </div>
+
                     </div>
                 </div>
             </div>
