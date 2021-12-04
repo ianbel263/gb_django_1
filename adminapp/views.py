@@ -197,7 +197,7 @@ def product_update(request, pk):
 @user_passes_test(lambda user: user.is_superuser)
 def product_delete(request, pk):
     if request.method == 'POST':
-        current_product = get_object_or_404(Category, pk=pk)
+        current_product = get_object_or_404(Product, pk=pk)
         current_product.is_active = False
         current_product.save()
         messages.success(request, 'Товар успешно удален')

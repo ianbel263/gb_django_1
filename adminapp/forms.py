@@ -73,6 +73,8 @@ class CategoryForm(forms.ModelForm):
 
 
 class ProductForm(forms.ModelForm):
+    image = forms.ImageField(widget=forms.FileInput, required=False)
+
     class Meta:
         model = Product
         fields = ('name', 'price', 'desc', 'image', 'quantity', 'category')
