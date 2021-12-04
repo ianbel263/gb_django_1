@@ -3,6 +3,8 @@ import subprocess
 
 from django.core.management.base import BaseCommand
 
+from authapp.models import User
+
 MODELS = [
     {
         'name': 'category',
@@ -23,6 +25,7 @@ class Command(BaseCommand):
         self.__apply_migrations()
         for model in MODELS:
             self.__load_data(model)
+        self.__add_super_user()
 
     @staticmethod
     def __remove_db():
@@ -46,3 +49,7 @@ class Command(BaseCommand):
     def __save_data(model):
         with open(f'./fixtures/{model["plural_name"]}.json', 'w') as f:
             subprocess.call(['python3', 'manage.py', 'dumpdata', f'mainapp.{model["name"]}'], stdout=f)
+
+    @staticmethod
+    def __add_super_user():
+        User.objects.create_superuser('andrey', '1@mail.ru', '1')
