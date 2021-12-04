@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, get_list_or_404
 
 from .models import Category, Product
 
@@ -12,12 +12,17 @@ def index(request):
     return render(request, 'mainapp/index.html', context)
 
 
-def products(request):
+def products(request, category_pk):
     title = 'GeekShop - Каталог'
+    if category_pk == 0:
+        selected_products = Product.objects.filter(is_active=True)
+    else:
+        selected_products = get_list_or_404(Product, category=category_pk, is_active=True)
+
     context = {
         'title': title,
         'categories': Category.objects.filter(is_active=True),
-        'products': Product.objects.filter(is_active=True)
+        'products': selected_products
     }
     return render(request, 'mainapp/products.html', context)
 
