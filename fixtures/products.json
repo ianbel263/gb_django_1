@@ -9,6 +9,7 @@
       "image": "product_img/Adidas-hoodie.png",
       "quantity": 5,
       "category": 2,
+      "is_active": "True",
       "created_at": "2021-12-01",
       "updated_at": "2021-12-01"
     }
@@ -23,6 +24,7 @@
       "image": "product_img/Blue-jacket-The-North-Face.png",
       "quantity": 10,
       "category": 2,
+      "is_active": "True",
       "created_at": "2021-12-01",
       "updated_at": "2021-12-01"
     }
@@ -37,6 +39,7 @@
       "image": "product_img/Brown-sports-oversized-top-ASOS-DESIGN.png",
       "quantity": 8,
       "category": 2,
+      "is_active": "True",
       "created_at": "2021-12-01",
       "updated_at": "2021-12-01"
     }
@@ -51,6 +54,7 @@
       "image": "product_img/Black-Nike-Heritage-backpack.png",
       "quantity": 53,
       "category": 4,
+      "is_active": "True",
       "created_at": "2021-12-01",
       "updated_at": "2021-12-01"
     }
@@ -65,6 +69,7 @@
       "image": "product_img/Black-Dr-Martens-shoes.png",
       "quantity": 15,
       "category": 3,
+      "is_active": "True",
       "created_at": "2021-12-01",
       "updated_at": "2021-12-01"
     }
@@ -76,9 +81,10 @@
       "name": "Темно-синие широкие строгие брюки ASOS DESIGN",
       "price": "2890.00",
       "desc": "Легкая эластичная ткань сирсакер Фактурная ткань.",
-      "image": "product_img/Dark-blue-wide-leg-ASOs-DESIGN-trousers_BD5c0UJ.png",
+      "image": "product_img/Dark-blue-wide-leg-ASOs-DESIGN-trousers.png",
       "quantity": 15,
       "category": 1,
+      "is_active": "True",
       "created_at": "2021-12-01",
       "updated_at": "2021-12-01"
     }
