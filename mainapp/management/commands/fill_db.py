@@ -19,8 +19,8 @@ MODELS = [
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        for model in MODELS:
-            self.__save_data(model)
+        # for model in MODELS:
+        #     self.__save_data(model)
         self.__remove_db()
         self.__apply_migrations()
         for model in MODELS:
