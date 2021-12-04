@@ -11,6 +11,9 @@ from mainapp.models import Product
 
 @login_required
 def add_basket(request, product_pk):
+    if 'login' in request.META.get('HTTP_REFERER'):
+        return HttpResponseRedirect(reverse('mainapp:detail', args=[product_pk]))
+
     user = request.user
     product = get_object_or_404(Product, pk=product_pk)
     baskets = Basket.objects.filter(user=user, product=product)

@@ -34,6 +34,7 @@ def register(request):
 
 def login(request):
     title = 'GeekShop - Авторизация'
+    next_page = request.GET['next'] if 'next' in request.GET.keys() else ''
     if request.method == 'POST':
         form = UserLoginForm(data=request.POST)
         if form.is_valid():
@@ -42,13 +43,16 @@ def login(request):
             user = auth.authenticate(username=username, password=password)
             if user.is_active:
                 auth.login(request, user)
-                return HttpResponseRedirect(reverse('index'))
+                if 'next' in request.POST.keys():
+                    return HttpResponseRedirect(request.POST['next'])
+                else:
+                    return HttpResponseRedirect(reverse('index'))
     else:
         form = UserLoginForm()
-
     context = {
         'title': title,
-        'form': form
+        'form': form,
+        'next': next_page
     }
     return render(request, 'authapp/login.html', context)
 
