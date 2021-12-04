@@ -5,9 +5,9 @@ from django.shortcuts import render, get_object_or_404
 # Create your views here.
 from django.urls import reverse
 
-from adminapp.forms import UserCreateForm, UserUpdateForm, CategoryForm
+from adminapp.forms import UserCreateForm, UserUpdateForm, CategoryForm, ProductForm
 from authapp.models import User
-from mainapp.models import Category
+from mainapp.models import Category, Product
 
 
 @user_passes_test(lambda user: user.is_superuser)
@@ -42,7 +42,7 @@ def user_create(request):
         'title': title,
         'form': form
     }
-    return render(request, 'adminapp/users_create.html', context)
+    return render(request, 'adminapp/user_create.html', context)
 
 
 @user_passes_test(lambda user: user.is_superuser)
@@ -65,7 +65,7 @@ def user_update(request, pk):
         'form': form,
         'user': current_user
     }
-    return render(request, 'adminapp/users_update_delete.html', context)
+    return render(request, 'adminapp/user_update_delete.html', context)
 
 
 @user_passes_test(lambda user: user.is_superuser)
@@ -139,3 +139,66 @@ def category_delete(request, pk):
         current_category.save()
         messages.success(request, 'Категория успешно удалена')
     return HttpResponseRedirect(reverse('adminapp:categories'))
+
+
+# Контроллеры работы с товарами
+@user_passes_test(lambda user: user.is_superuser)
+def products(request):
+    title = 'Geekshop - Товары'
+    all_products = Product.objects.all()
+    context = {
+        'title': title,
+        'products': all_products
+    }
+    return render(request, 'adminapp/products.html', context)
+
+
+@user_passes_test(lambda user: user.is_superuser)
+def product_create(request):
+    title = 'Geekshop - Создание товара'
+    if request.method == 'POST':
+        form = ProductForm(data=request.POST, files=request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Товар добавлен')
+            return HttpResponseRedirect(reverse('adminapp:products'))
+    else:
+        form = ProductForm()
+    context = {
+        'title': title,
+        'form': form
+    }
+    return render(request, 'adminapp/product_create.html', context)
+
+
+@user_passes_test(lambda user: user.is_superuser)
+def product_update(request, pk):
+    current_product = get_object_or_404(Product, pk=pk)
+    title = f'Geekshop - Редактирование товара - "{current_product.name}"'
+    if request.method == 'POST':
+        form = ProductForm(data=request.POST, instance=current_product, files=request.FILES)
+        if form.is_valid():
+            if form.changed_data:
+                form.save()
+                messages.success(request, f'Товар "{current_product.name}" обновлен')
+            else:
+                messages.success(request, 'Вы ничего не изменили')
+            return HttpResponseRedirect(reverse('adminapp:products'))
+    else:
+        form = ProductForm(instance=current_product)
+    context = {
+        'title': title,
+        'form': form,
+        'product': current_product
+    }
+    return render(request, 'adminapp/product_update_delete.html', context)
+
+
+@user_passes_test(lambda user: user.is_superuser)
+def product_delete(request, pk):
+    if request.method == 'POST':
+        current_product = get_object_or_404(Category, pk=pk)
+        current_product.is_active = False
+        current_product.save()
+        messages.success(request, 'Товар успешно удален')
+    return HttpResponseRedirect(reverse('adminapp:products'))
