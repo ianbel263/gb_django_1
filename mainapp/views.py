@@ -15,12 +15,15 @@ def index(request):
 def products(request, category_pk):
     title = 'GeekShop - Каталог'
     if category_pk == 0:
+        category = 'Все товары'
         selected_products = Product.objects.filter(is_active=True)
     else:
-        selected_products = get_list_or_404(Product, category=category_pk, is_active=True)
+        category = get_object_or_404(Category, pk=category_pk)
+        selected_products = Product.objects.filter(category=category_pk, is_active=True)
 
     context = {
         'title': title,
+        'category': category,
         'categories': Category.objects.filter(is_active=True),
         'products': selected_products
     }
