@@ -5,8 +5,9 @@ from django.shortcuts import render, get_object_or_404
 # Create your views here.
 from django.urls import reverse
 
-from adminapp.forms import UserCreateForm, UserUpdateForm
+from adminapp.forms import UserCreateForm, UserUpdateForm, CategoryForm
 from authapp.models import User
+from mainapp.models import Category
 
 
 @user_passes_test(lambda user: user.is_superuser)
@@ -14,6 +15,7 @@ def index(request):
     return render(request, 'adminapp/main.html')
 
 
+# Контроллеры работы с пользователями
 @user_passes_test(lambda user: user.is_superuser)
 def users(request):
     title = 'Geekshop - Пользователи'
@@ -46,13 +48,13 @@ def user_create(request):
 @user_passes_test(lambda user: user.is_superuser)
 def user_update(request, pk):
     current_user = get_object_or_404(User, pk=pk)
-    title = f'Geekshop - Редактирование пользователя - {current_user.username}'
+    title = f'Geekshop - Редактирование пользователя - "{current_user.username}"'
     if request.method == 'POST':
         form = UserUpdateForm(data=request.POST, files=request.FILES, instance=current_user)
         if form.is_valid():
             if form.changed_data:
                 form.save()
-                messages.success(request, f'Пользователь {current_user.username} обновлен')
+                messages.success(request, f'Пользователь "{current_user.username}" обновлен')
             else:
                 messages.success(request, 'Вы ничего не изменили')
             return HttpResponseRedirect(reverse('adminapp:users'))
@@ -74,3 +76,66 @@ def user_delete(request, pk):
         current_user.save()
         messages.success(request, 'Пользователь успешно удален')
     return HttpResponseRedirect(reverse('adminapp:users'))
+
+
+# Контроллеры работы с категориями товаров
+@user_passes_test(lambda user: user.is_superuser)
+def categories(request):
+    title = 'Geekshop - Категории товаров'
+    all_categories = Category.objects.all()
+    context = {
+        'title': title,
+        'categories': all_categories
+    }
+    return render(request, 'adminapp/categories.html', context)
+
+
+@user_passes_test(lambda user: user.is_superuser)
+def category_create(request):
+    title = 'Geekshop - Создание категории товаров'
+    if request.method == 'POST':
+        form = CategoryForm(data=request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Категория добавлена')
+            return HttpResponseRedirect(reverse('adminapp:categories'))
+    else:
+        form = CategoryForm()
+    context = {
+        'title': title,
+        'form': form
+    }
+    return render(request, 'adminapp/category_create.html', context)
+
+
+@user_passes_test(lambda user: user.is_superuser)
+def category_update(request, pk):
+    current_category = get_object_or_404(Category, pk=pk)
+    title = f'Geekshop - Редактирование категории товаров - "{current_category.name}"'
+    if request.method == 'POST':
+        form = CategoryForm(data=request.POST, instance=current_category)
+        if form.is_valid():
+            if form.changed_data:
+                form.save()
+                messages.success(request, f'Категория "{current_category.name}" обновлена')
+            else:
+                messages.success(request, 'Вы ничего не изменили')
+            return HttpResponseRedirect(reverse('adminapp:categories'))
+    else:
+        form = CategoryForm(instance=current_category)
+    context = {
+        'title': title,
+        'form': form,
+        'category': current_category
+    }
+    return render(request, 'adminapp/category_update_delete.html', context)
+
+
+@user_passes_test(lambda user: user.is_superuser)
+def category_delete(request, pk):
+    if request.method == 'POST':
+        current_category = get_object_or_404(Category, pk=pk)
+        current_category.is_active = False
+        current_category.save()
+        messages.success(request, 'Категория успешно удалена')
+    return HttpResponseRedirect(reverse('adminapp:categories'))
