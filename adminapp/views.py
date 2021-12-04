@@ -11,7 +11,7 @@ from authapp.models import User
 
 @user_passes_test(lambda user: user.is_superuser)
 def index(request):
-    return render(request, 'adminapp/admin.html')
+    return render(request, 'adminapp/main.html')
 
 
 @user_passes_test(lambda user: user.is_superuser)
@@ -22,7 +22,7 @@ def users(request):
         'title': title,
         'users': all_users
     }
-    return render(request, 'adminapp/admin-users-read.html', context)
+    return render(request, 'adminapp/users.html', context)
 
 
 @user_passes_test(lambda user: user.is_superuser)
@@ -40,7 +40,7 @@ def user_create(request):
         'title': title,
         'form': form
     }
-    return render(request, 'adminapp/admin-users-create.html', context)
+    return render(request, 'adminapp/users_create.html', context)
 
 
 @user_passes_test(lambda user: user.is_superuser)
@@ -63,7 +63,7 @@ def user_update(request, pk):
         'form': form,
         'user': current_user
     }
-    return render(request, 'adminapp/admin-users-update-delete.html', context)
+    return render(request, 'adminapp/users_update_delete.html', context)
 
 
 @user_passes_test(lambda user: user.is_superuser)
