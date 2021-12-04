@@ -6,7 +6,7 @@
                 <h1 class="mt-4">Редактирование категории - "{{ category.name }}"</h1>
                 {% include 'authapp/includes/inc_message.html' %}
                 <div class="card-body">
-                    <form action="{% url 'adminapp:category_update' user.id %}" method="post">
+                    <form action="{% url 'adminapp:category_update' category.id %}" method="post">
                         {% csrf_token %}
                         <div class="form-row">
                             <div class="col-lg-12">
