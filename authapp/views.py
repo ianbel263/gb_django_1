@@ -15,6 +15,7 @@ success_messages = {
 
 
 def register(request):
+    title = 'GeekShop - Регистрация'
     if request.method == 'POST':
         form = UserRegisterForm(data=request.POST)
         if form.is_valid():
@@ -25,13 +26,15 @@ def register(request):
         form = UserRegisterForm()
 
     context = {
-        'title': 'GeekShop - Регистрация',
-        'form': form,
+        'title': title,
+        'form': form
     }
     return render(request, 'authapp/register.html', context)
 
 
 def login(request):
+    title = 'GeekShop - Авторизация'
+    next_page = request.GET['next'] if 'next' in request.GET.keys() else ''
     if request.method == 'POST':
         form = UserLoginForm(data=request.POST)
         if form.is_valid():
@@ -40,28 +43,33 @@ def login(request):
             user = auth.authenticate(username=username, password=password)
             if user.is_active:
                 auth.login(request, user)
-                return HttpResponseRedirect(reverse('index'))
+                if 'next' in request.POST.keys():
+                    return HttpResponseRedirect(request.POST['next'])
+                else:
+                    return HttpResponseRedirect(reverse('index'))
     else:
         form = UserLoginForm()
-
     context = {
-        'title': 'GeekShop - Авторизация',
+        'title': title,
         'form': form,
+        'next': next_page
     }
     return render(request, 'authapp/login.html', context)
 
 
 @login_required
 def profile(request):
+    title = 'GeekShop - Профиль пользователя'
     if request.method == 'POST':
         form = UserProfileForm(instance=request.user, data=request.POST, files=request.FILES)
-        if form.is_valid():
+        if form.is_valid() and form.changed_data:
             form.save()
             messages.success(request, success_messages['profile'])
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     else:
         form = UserProfileForm(instance=request.user)
     context = {
-        'title': 'GeekShop - Профиль пользователя',
+        'title': title,
         'form': form,
         'baskets': Basket.objects.filter(user=request.user)
     }
