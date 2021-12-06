@@ -7,8 +7,8 @@
         <div class="card-body">
             <form action="{% url 'authapp:login' %}" method="post">
                 {% csrf_token %}
-                {% if next %}
-                    <input type="hidden" name="next" value="{{ next }}">
+                {% if redirect_to %}
+                    <input type="hidden" name="redirect_to" value="{{ redirect_to }}">
                 {% endif %}
                 {% for field in form %}
                     <div class="form-group">
