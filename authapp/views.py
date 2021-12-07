@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LogoutView, LoginView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
@@ -43,7 +44,7 @@ class UserCreateView(SuccessMessageMixin, CreateView):
     success_message = success_messages['register']
 
 
-class UserUpdateView(SuccessMessageMixin, UpdateView):
+class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = User
     form_class = UserProfileForm
     template_name = 'authapp/profile.html'
@@ -58,10 +59,6 @@ class UserUpdateView(SuccessMessageMixin, UpdateView):
 
     def get_success_url(self):
         return reverse_lazy('authapp:profile', kwargs={'pk': self.object.pk})
-
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        return super(UserUpdateView, self).dispatch(request, *args, **kwargs)
 
 
 class UserLogoutView(LogoutView):
