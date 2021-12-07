@@ -17,7 +17,8 @@ class BasketAddView(LoginRequiredMixin, RedirectView):
         return super(BasketAddView, self).get_redirect_url(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        product_pk = self.kwargs.get('product_pk')
+        data = json.loads(request.body)
+        product_pk = data['productID']
         user = request.user
         product = get_object_or_404(Product, pk=product_pk)
         baskets = Basket.objects.filter(user=user, product=product)

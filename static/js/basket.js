@@ -37,14 +37,19 @@ const load = ({url, method = RequestMethod.GET, body = null, headers = new Heade
 
 const onAddBasketLinkClick = (evt) => {
     evt.preventDefault();
-    const url = `${Urls.ADD}${evt.target.dataset.id}/`
+    const productID = evt.target.dataset.id
+    const uploadData = {
+        productID: productID
+    }
+    const url = `${Urls.ADD}${productID}/`
     load({
         url: url,
         method: RequestMethod.POST,
         headers: new Headers({
             'X-CSRFToken': csrfToken,
-            // 'Content-Type': `application/json`
-        })
+            'Content-Type': `application/json`
+        }),
+        body: JSON.stringify(uploadData),
     })
         .then((response) => {
             if (response.redirected) {
