@@ -20,19 +20,33 @@ success_messages = {
 class UserLoginView(LoginView):
     form_class = UserLoginForm
     template_name = 'authapp/login.html'
-    redirect_to = ''
+    next = None
+    # redirect_to = '/'
     extra_context = {
         'title': 'GeekShop - Авторизация'
     }
 
-    def get_success_url(self):
-        return reverse_lazy('index') if 'redirect_to' not in self.request.POST.keys() \
-            else self.request.POST['redirect_to']
-
     def get(self, request, *args, **kwargs):
-        self.redirect_to = request.GET['next'] if 'next' in request.GET.keys() else ''
-        self.extra_context.update({'redirect_to': self.redirect_to})
+        if 'next' in request.GET.keys():
+            self.next = request.GET['next']
         return super(UserLoginView, self).get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        print(self.next)
+        return super(UserLoginView, self).get_context_data(next=self.next)
+
+    def get_success_url(self):
+        self.success_url = self.request.POST['next']
+        return super(UserLoginView, self).get_success_url()
+
+    # def get_success_url(self):
+    #     return self.redirect_to if 'next' not in self.request.POST.keys() \
+    #         else self.request.POST['next']
+    #
+    # def post(self, request, *args, **kwargs):
+    #     self.redirect_to = request.POST['next'] if 'next' in request.POST.keys() else ''
+    #     self.extra_context.update({'next': self.redirect_to})
+    #     return super(UserLoginView, self).get(request, *args, **kwargs)
 
 
 class UserCreateView(SuccessMessageMixin, CreateView):

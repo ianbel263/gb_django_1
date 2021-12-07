@@ -1,23 +1,23 @@
 import json
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
-from django.urls import reverse
+from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import DeleteView
+from django.views.generic import DeleteView, RedirectView
 
 from basketapp.models import Basket
 from mainapp.models import Product
 
 
-class BasketAddView(LoginRequiredMixin, View):
+class BasketAddView(LoginRequiredMixin, RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        self.url = reverse_lazy('mainapp:detail', kwargs={'pk': self.kwargs.get('product_pk')})
+        return super(BasketAddView, self).get_redirect_url(*args, **kwargs)
+
     def post(self, request, *args, **kwargs):
         product_pk = self.kwargs.get('product_pk')
-
-        if 'login' in request.META.get('HTTP_REFERER'):
-            return HttpResponseRedirect(reverse('mainapp:detail', args=[product_pk]))
-
         user = request.user
         product = get_object_or_404(Product, pk=product_pk)
         baskets = Basket.objects.filter(user=user, product=product)
