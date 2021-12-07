@@ -12,10 +12,12 @@
             <div class="col-lg-3">
                 <h1 class="my-4">GeekShop</h1>
                 <div class="list-group">
-                    <a href="{% url 'mainapp:products' %}" class="list-group-item">Все товары</a>
+                    <a href="{% url 'mainapp:products' %}"
+                       class="list-group-item {% if not current_category %}active{% endif %}">Все товары</a>
 
                     {% for category in categories %}
-                        <a href="{% url 'mainapp:category' category.id %}" class="list-group-item">{{ category }}</a>
+                        <a href="{% url 'mainapp:category' category.id %}"
+                           class="list-group-item {% if category.id == current_category %}active{% endif %}">{{ category }}</a>
                     {% endfor %}
                 </div>
 
