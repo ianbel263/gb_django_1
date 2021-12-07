@@ -1,43 +1,46 @@
 import json
 
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
+from django.views import View
+from django.views.generic import DeleteView
 
 from basketapp.models import Basket
 from mainapp.models import Product
 
 
-@login_required
-def add_basket(request, product_pk):
-    if 'login' in request.META.get('HTTP_REFERER'):
-        return HttpResponseRedirect(reverse('mainapp:detail', args=[product_pk]))
+class BasketAddView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        product_pk = self.kwargs.get('product_pk')
 
-    user = request.user
-    product = get_object_or_404(Product, pk=product_pk)
-    baskets = Basket.objects.filter(user=user, product=product)
-    if baskets:
-        basket = baskets.first()
-        basket.quantity += 1
-        basket.save()
-    else:
-        Basket.objects.create(user=user, product=product, quantity=1)
-    return JsonResponse({
-        'success': True
-    })
+        if 'login' in request.META.get('HTTP_REFERER'):
+            return HttpResponseRedirect(reverse('mainapp:detail', args=[product_pk]))
 
-
-@login_required
-def delete_basket(request, pk):
-    basket = get_object_or_404(Basket, pk=pk)
-    basket.delete()
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+        user = request.user
+        product = get_object_or_404(Product, pk=product_pk)
+        baskets = Basket.objects.filter(user=user, product=product)
+        if baskets:
+            basket = baskets.first()
+            basket.quantity += 1
+            basket.save()
+        else:
+            Basket.objects.create(user=user, product=product, quantity=1)
+        return JsonResponse({
+            'success': True
+        })
 
 
-@login_required
-def update_basket(request):
-    if request.method == 'POST':
+class BasketDeleteView(LoginRequiredMixin, DeleteView):
+    model = Basket
+
+    def get_success_url(self):
+        return self.request.META.get('HTTP_REFERER')
+
+
+class BasketUpdateView(LoginRequiredMixin, View):
+    def post(self, request):
         data = json.loads(request.body)
         basket_id = data['basketID']
         quantity = int(data['quantity'])
@@ -51,5 +54,3 @@ def update_basket(request):
             'totalPrice': basket.total_all_price,
             'totalQuantity': basket.total_quantity
         })
-    else:
-        return HttpResponseRedirect(reverse('index'))

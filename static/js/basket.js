@@ -38,7 +38,14 @@ const load = ({url, method = RequestMethod.GET, body = null, headers = new Heade
 const onAddBasketLinkClick = (evt) => {
     evt.preventDefault();
     const url = `${Urls.ADD}${evt.target.dataset.id}/`
-    load({url: url})
+    load({
+        url: url,
+        method: RequestMethod.POST,
+        headers: new Headers({
+            'X-CSRFToken': csrfToken,
+            // 'Content-Type': `application/json`
+        })
+    })
         .then((response) => {
             if (response.redirected) {
                 window.location.href = response.url
