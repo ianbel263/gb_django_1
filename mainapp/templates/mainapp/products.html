@@ -12,8 +12,12 @@
             <div class="col-lg-3">
                 <h1 class="my-4">GeekShop</h1>
                 <div class="list-group">
+                    <a href="{% url 'mainapp:products' %}"
+                       class="list-group-item {% if not current_category %}active{% endif %}">Все товары</a>
+
                     {% for category in categories %}
-                        <a href="{% url 'mainapp:products' category.id %}" class="list-group-item">{{ category }}</a>
+                        <a href="{% url 'mainapp:category' category.id %}"
+                           class="list-group-item {% if category.id == current_category %}active{% endif %}">{{ category }}</a>
                     {% endfor %}
                 </div>
 
@@ -50,18 +54,13 @@
                         <span class="sr-only">Next</span>
                     </a>
                 </div>
-                <h2 class="mb-3">{{ category }}</h2>
                 <div class="row">
-
                     {% for product in products %}
                         <div class="col-lg-4 col-md-6 mb-4">
                             <div class="card h-100">
                                 <a href="{% url 'mainapp:detail' product.id %}">
                                     <img class="card-img-top"
-                                         src="
-
-
-                                                 {% if product.image %}{{ product.image.url }}{% else %}{% static 'vendor/img/products/default.jpg' %}{% endif %}"
+                                         src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'vendor/img/products/default.jpg' %}{% endif %}"
                                          alt="{{ product.name }}">
                                 </a>
                                 <div class="card-body">
@@ -83,21 +82,7 @@
                     {% endfor %}
 
                 </div>
-
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-                        </li>
-                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">Next</a>
-                        </li>
-                    </ul>
-                </nav>
-
+                {% include 'mainapp/includes/inc_pagination.html' %}
             </div>
 
         </div>

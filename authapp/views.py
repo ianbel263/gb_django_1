@@ -1,11 +1,14 @@
-from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
-from django.shortcuts import render
-from django.urls import reverse
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import LogoutView, LoginView
+from django.contrib.messages.views import SuccessMessageMixin
+from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
+from django.views.generic import CreateView, UpdateView
 
 from authapp.forms import UserLoginForm, UserRegisterForm, UserProfileForm
+from authapp.models import User
 from basketapp.models import Basket
 
 success_messages = {
@@ -14,68 +17,63 @@ success_messages = {
 }
 
 
-def register(request):
-    title = 'GeekShop - Регистрация'
-    if request.method == 'POST':
-        form = UserRegisterForm(data=request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, success_messages['register'])
-            return HttpResponseRedirect(reverse('authapp:login'))
-    else:
-        form = UserRegisterForm()
-
-    context = {
-        'title': title,
-        'form': form
+class UserLoginView(LoginView):
+    form_class = UserLoginForm
+    template_name = 'authapp/login.html'
+    next = None
+    # redirect_to = '/'
+    extra_context = {
+        'title': 'GeekShop - Авторизация'
     }
-    return render(request, 'authapp/register.html', context)
+
+    def get(self, request, *args, **kwargs):
+        if 'next' in request.GET.keys():
+            self.next = request.GET['next']
+        return super(UserLoginView, self).get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        print(self.next)
+        return super(UserLoginView, self).get_context_data(next=self.next)
+
+    def get_success_url(self):
+        self.success_url = self.request.POST['next']
+        return super(UserLoginView, self).get_success_url()
+
+    # def get_success_url(self):
+    #     return self.redirect_to if 'next' not in self.request.POST.keys() \
+    #         else self.request.POST['next']
+    #
+    # def post(self, request, *args, **kwargs):
+    #     self.redirect_to = request.POST['next'] if 'next' in request.POST.keys() else ''
+    #     self.extra_context.update({'next': self.redirect_to})
+    #     return super(UserLoginView, self).get(request, *args, **kwargs)
 
 
-def login(request):
-    title = 'GeekShop - Авторизация'
-    next_page = request.GET['next'] if 'next' in request.GET.keys() else ''
-    if request.method == 'POST':
-        form = UserLoginForm(data=request.POST)
-        if form.is_valid():
-            username = request.POST.get('username')
-            password = request.POST.get('password')
-            user = auth.authenticate(username=username, password=password)
-            if user.is_active:
-                auth.login(request, user)
-                if 'next' in request.POST.keys():
-                    return HttpResponseRedirect(request.POST['next'])
-                else:
-                    return HttpResponseRedirect(reverse('index'))
-    else:
-        form = UserLoginForm()
-    context = {
-        'title': title,
-        'form': form,
-        'next': next_page
+class UserCreateView(SuccessMessageMixin, CreateView):
+    model = User
+    form_class = UserRegisterForm
+    template_name = 'authapp/register.html'
+    extra_context = {'title': 'GeekShop - Регистрация'}
+    success_url = reverse_lazy('authapp:login')
+    success_message = success_messages['register']
+
+
+class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    model = User
+    form_class = UserProfileForm
+    template_name = 'authapp/profile.html'
+    extra_context = {
+        'title': 'GeekShop - Профиль пользователя',
     }
-    return render(request, 'authapp/login.html', context)
+    success_message = success_messages['profile']
+
+    def get_context_data(self, **kwargs):
+        self.extra_context.update({'baskets': Basket.objects.filter(user=self.object.pk)})
+        return super().get_context_data(**kwargs)
+
+    def get_success_url(self):
+        return reverse_lazy('authapp:profile', kwargs={'pk': self.object.pk})
 
 
-@login_required
-def profile(request):
-    title = 'GeekShop - Профиль пользователя'
-    if request.method == 'POST':
-        form = UserProfileForm(instance=request.user, data=request.POST, files=request.FILES)
-        if form.is_valid() and form.changed_data:
-            form.save()
-            messages.success(request, success_messages['profile'])
-            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-    else:
-        form = UserProfileForm(instance=request.user)
-    context = {
-        'title': title,
-        'form': form,
-        'baskets': Basket.objects.filter(user=request.user)
-    }
-    return render(request, 'authapp/profile.html', context)
-
-
-def logout(request):
-    auth.logout(request)
-    return render(request, 'mainapp/index.html')
+class UserLogoutView(LogoutView):
+    next_page = reverse_lazy('index')
