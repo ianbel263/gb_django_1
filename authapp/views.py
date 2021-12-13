@@ -89,7 +89,6 @@ class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     success_message = success_messages['profile']
 
     def get_context_data(self, **kwargs):
-        self.extra_context.update({'baskets': Basket.objects.filter(user=self.object.pk)})
         return super().get_context_data(**kwargs)
 
     def get_success_url(self):
