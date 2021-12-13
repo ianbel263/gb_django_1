@@ -1,9 +1,7 @@
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LogoutView, LoginView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
-from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django.views.generic import CreateView, UpdateView
 
@@ -21,7 +19,6 @@ class UserLoginView(LoginView):
     form_class = UserLoginForm
     template_name = 'authapp/login.html'
     next = None
-    # redirect_to = '/'
     extra_context = {
         'title': 'GeekShop - Авторизация'
     }
@@ -38,15 +35,6 @@ class UserLoginView(LoginView):
     def get_success_url(self):
         self.success_url = self.request.POST['next']
         return super(UserLoginView, self).get_success_url()
-
-    # def get_success_url(self):
-    #     return self.redirect_to if 'next' not in self.request.POST.keys() \
-    #         else self.request.POST['next']
-    #
-    # def post(self, request, *args, **kwargs):
-    #     self.redirect_to = request.POST['next'] if 'next' in request.POST.keys() else ''
-    #     self.extra_context.update({'next': self.redirect_to})
-    #     return super(UserLoginView, self).get(request, *args, **kwargs)
 
 
 class UserCreateView(SuccessMessageMixin, CreateView):
