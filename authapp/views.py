@@ -1,9 +1,12 @@
-from django.contrib.auth.decorators import login_required
+from django.conf import settings
+from django.contrib import auth
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LogoutView, LoginView
 from django.contrib.messages.views import SuccessMessageMixin
+from django.core.mail import send_mail
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django.views.generic import CreateView, UpdateView
 
@@ -21,7 +24,6 @@ class UserLoginView(LoginView):
     form_class = UserLoginForm
     template_name = 'authapp/login.html'
     next = None
-    # redirect_to = '/'
     extra_context = {
         'title': 'GeekShop - Авторизация'
     }
@@ -39,15 +41,6 @@ class UserLoginView(LoginView):
         self.success_url = self.request.POST['next']
         return super(UserLoginView, self).get_success_url()
 
-    # def get_success_url(self):
-    #     return self.redirect_to if 'next' not in self.request.POST.keys() \
-    #         else self.request.POST['next']
-    #
-    # def post(self, request, *args, **kwargs):
-    #     self.redirect_to = request.POST['next'] if 'next' in request.POST.keys() else ''
-    #     self.extra_context.update({'next': self.redirect_to})
-    #     return super(UserLoginView, self).get(request, *args, **kwargs)
-
 
 class UserCreateView(SuccessMessageMixin, CreateView):
     model = User
@@ -56,6 +49,34 @@ class UserCreateView(SuccessMessageMixin, CreateView):
     extra_context = {'title': 'GeekShop - Регистрация'}
     success_url = reverse_lazy('authapp:login')
     success_message = success_messages['register']
+
+    def form_valid(self, form):
+        response = super(UserCreateView, self).form_valid(form)
+        try:
+            self.send_verify_link(self.object)
+        except Exception as e:
+            pass
+        return response
+
+    @staticmethod
+    def send_verify_link(user):
+        verify_link = reverse_lazy('authapp:verify', args=[user.email, user.activation_key])
+        subject = f'Для активации учетной записи {user.username} пройдите по ссылке'
+        message = f'Для подтверждения учетной записи {user.username} на портале {settings.DOMAIN_NAME}\nпройдите по ссылке: {settings.DOMAIN_NAME}{verify_link}'
+        return send_mail(subject, message, settings.EMAIL_HOST_USER, [user.email], fail_silently=False)
+
+    def verify(self, email, activation_key):
+        try:
+            user = User.objects.get(email=email)
+            if user and user.activation_key == activation_key and not user.is_activation_key_expired():
+                user.activation_key = ''
+                user.activation_key_expires_at = None
+                user.is_active = True
+                user.save()
+                auth.login(self, user)
+            return render(self, 'authapp/verification.html')
+        except Exception as e:
+            return HttpResponseRedirect(reverse_lazy('index'))
 
 
 class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
@@ -68,7 +89,6 @@ class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     success_message = success_messages['profile']
 
     def get_context_data(self, **kwargs):
-        self.extra_context.update({'baskets': Basket.objects.filter(user=self.object.pk)})
         return super().get_context_data(**kwargs)
 
     def get_success_url(self):
