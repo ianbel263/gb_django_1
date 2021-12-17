@@ -6,7 +6,7 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, User
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
-from authapp.models import User
+from authapp.models import User, UserProfile
 from authapp.validate import validate_age
 
 
@@ -20,7 +20,9 @@ def update_widgets(fields):
         'age': _('Age'),
         'password': _('Password'),
         'password1': _('Password'),
-        'password2': _('Confirm password')
+        'password2': _('Confirm password'),
+        'about': _('About yourself'),
+        'gender': _('Gender')
     }
 
     placeholders = {
@@ -32,12 +34,16 @@ def update_widgets(fields):
         'age': _('Enter your age'),
         'password': _('Enter password'),
         'password1': _('Enter password'),
-        'password2': _('Confirm password')
+        'password2': _('Confirm password'),
+        'about': _('Tell about yourself'),
+        'gender': _('Gender')
     }
 
     for name, field in fields.items():
         if name == 'image':
             field.widget.attrs['class'] = 'custom-file-input'
+        elif name == 'gender' or name == 'age':
+            field.widget.attrs['class'] = 'form-control'
         else:
             field.widget.attrs['class'] = 'form-control py-4'
         if name in labels:
@@ -91,6 +97,16 @@ class UserProfileForm(UserChangeForm):
         self.fields['username'].widget.attrs['readonly'] = True
         self.fields['email'].widget.attrs['readonly'] = True
         self.fields['first_name'].widget.attrs['autofocus'] = True
+        update_widgets(self.fields)
+
+
+class UserAdditionalProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        exclude = ('user',)
+
+    def __init__(self, *args, **kwargs):
+        super(UserAdditionalProfileForm, self).__init__(*args, **kwargs)
         update_widgets(self.fields)
 
 
