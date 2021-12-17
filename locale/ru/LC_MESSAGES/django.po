@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-28 06:27+0000\n"
+"POT-Creation-Date: 2021-12-16 15:46+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,70 +20,90 @@ msgstr ""
 "%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
 "%100>=11 && n%100<=14)? 2 : 3);\n"
 
-#: authapp/forms.py:11
+#: authapp/forms.py:15
 msgid "Name"
 msgstr "Имя"
 
-#: authapp/forms.py:12
+#: authapp/forms.py:16
 msgid "Surname"
 msgstr "Фамилия"
 
-#: authapp/forms.py:13 authapp/forms.py:25
+#: authapp/forms.py:17 authapp/forms.py:31
 msgid "Upload avatar"
 msgstr "Загрузите аватар"
 
-#: authapp/forms.py:14
+#: authapp/forms.py:18
 msgid "Username"
 msgstr "Имя пользователя"
 
-#: authapp/forms.py:15
+#: authapp/forms.py:19
 msgid "Email"
 msgstr "Электронная почта"
 
-#: authapp/forms.py:16
+#: authapp/forms.py:20
 msgid "Age"
 msgstr "Возраст"
 
-#: authapp/forms.py:17 authapp/forms.py:18
+#: authapp/forms.py:21 authapp/forms.py:22
 msgid "Password"
 msgstr "Пароль"
 
-#: authapp/forms.py:19 authapp/forms.py:31
+#: authapp/forms.py:23 authapp/forms.py:37
 msgid "Confirm password"
 msgstr "Подтвердите пароль"
 
-#: authapp/forms.py:23
+#: authapp/forms.py:24
+msgid "About yourself"
+msgstr "О себе"
+
+#: authapp/forms.py:25 authapp/forms.py:39
+msgid "Gender"
+msgstr "Пол"
+
+#: authapp/forms.py:29
 msgid "Enter name"
 msgstr "Введите имя"
 
-#: authapp/forms.py:24
+#: authapp/forms.py:30
 msgid "Enter surname"
 msgstr "Введите фамилию"
 
-#: authapp/forms.py:26
+#: authapp/forms.py:32
 msgid "Enter username"
 msgstr "Введите имя пользователя"
 
-#: authapp/forms.py:27
+#: authapp/forms.py:33
 msgid "Enter e-mail"
 msgstr "Введите адрес эл.почты"
 
-#: authapp/forms.py:28
+#: authapp/forms.py:34
 msgid "Enter your age"
 msgstr "Введите Ваш возраст"
 
-#: authapp/forms.py:29 authapp/forms.py:30
+#: authapp/forms.py:35 authapp/forms.py:36
 msgid "Enter password"
 msgstr "Введите пароль"
 
-#: authapp/forms.py:60
+#: authapp/forms.py:38
+msgid "Tell about yourself"
+msgstr "Расскажите о себе"
+
+#: authapp/models.py:18
+msgid "email address"
+msgstr "Адрес эл.почты"
+
+#: authapp/models.py:19
+msgid "A user with that email already exists."
+msgstr "Пользователь с таким адресом эд.почты уже зарегистрирован"
+
+#: authapp/validate.py:8
 msgid "The age must be at least 18 years old."
 msgstr "Возраст не должен быть менее 18 лет"
 
-#: authapp/views.py:10
+#: authapp/views.py:17
 msgid "You have successfully registered"
 msgstr "Вы успешно зарегистрированы"
 
-#: authapp/views.py:11
+#: authapp/views.py:18
 msgid "Changes saved successfully"
 msgstr "Изменения успешно сохранены"

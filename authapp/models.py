@@ -2,6 +2,8 @@ from datetime import timedelta
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 
@@ -22,3 +24,26 @@ class User(AbstractUser):
 
     def is_activation_key_expired(self):
         return now() > self.activation_key_expires_at
+
+
+class UserProfile(models.Model):
+    MALE = 'M'
+    FEMALE = 'F'
+
+    GENDER_CHOICES = (
+        (MALE, 'М'),
+        (FEMALE, 'Ж'),
+    )
+
+    user = models.OneToOneField(User, unique=True, null=False, on_delete=models.CASCADE, db_index=True)
+    gender = models.CharField(verbose_name='пол', max_length=1, blank=True, choices=GENDER_CHOICES)
+    about = models.TextField(verbose_name='о себе', max_length=512, blank=True)
+
+    @receiver(post_save, sender=User)
+    def create_user_profile(sender, instance, created, **kwargs):
+        if created:
+            UserProfile.objects.create(user=instance)
+
+    @receiver(post_save, sender=User)
+    def save_user_profile(sender, instance, **kwargs):
+        instance.userprofile.save()

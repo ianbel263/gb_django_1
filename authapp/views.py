@@ -4,15 +4,15 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LogoutView, LoginView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.mail import send_mail
+from django.db import transaction
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
 from django.views.generic import CreateView, UpdateView
 
-from authapp.forms import UserLoginForm, UserRegisterForm, UserProfileForm
+from authapp.forms import UserLoginForm, UserRegisterForm, UserProfileForm, UserAdditionalProfileForm
 from authapp.models import User
-from basketapp.models import Basket
 
 success_messages = {
     'register': _('You have successfully registered'),
@@ -73,7 +73,7 @@ class UserCreateView(SuccessMessageMixin, CreateView):
                 user.activation_key_expires_at = None
                 user.is_active = True
                 user.save()
-                auth.login(self, user)
+                auth.login(self, user, backend='django.contrib.auth.backends.ModelBackend')
             return render(self, 'authapp/verification.html')
         except Exception as e:
             return HttpResponseRedirect(reverse_lazy('index'))
@@ -88,8 +88,21 @@ class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     }
     success_message = success_messages['profile']
 
+    @transaction.atomic
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        user_profile_form = UserProfileForm(data=request.POST, files=request.FILES, instance=request.user)
+        user_additional_profile_form = UserAdditionalProfileForm(data=request.POST, instance=request.user.userprofile)
+
+        if user_profile_form.is_valid() and user_additional_profile_form.is_valid():
+            return self.form_valid(user_profile_form)
+        else:
+            return self.form_invalid(user_profile_form)
+
     def get_context_data(self, **kwargs):
-        return super().get_context_data(**kwargs)
+        return super(UserUpdateView, self).get_context_data(
+            additional_form=UserAdditionalProfileForm(instance=self.request.user.userprofile),
+            **kwargs)
 
     def get_success_url(self):
         return reverse_lazy('authapp:profile', kwargs={'pk': self.object.pk})
