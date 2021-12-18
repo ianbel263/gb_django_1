@@ -1,12 +1,15 @@
+import os
 from collections import OrderedDict
 from datetime import datetime
 from urllib.parse import urlencode, urlunparse
+from urllib.request import urlretrieve
 
 import requests
 from django.utils import timezone
 from social_core.exceptions import AuthForbidden
 
 from authapp.models import UserProfile
+from geekshop.settings import MEDIA_ROOT
 
 
 def save_user_profile(backend, user, response, *args, **kwargs):
@@ -17,7 +20,7 @@ def save_user_profile(backend, user, response, *args, **kwargs):
                           'api.vk.com',
                           '/method/users.get',
                           None,
-                          urlencode(OrderedDict(fields=','.join(('bdate', 'sex', 'about')),
+                          urlencode(OrderedDict(fields=','.join(('bdate', 'sex', 'about', 'photo_100')),
                                                 access_token=response['access_token'],
                                                 v='5.131')),
                           None
@@ -43,5 +46,14 @@ def save_user_profile(backend, user, response, *args, **kwargs):
             user.delete()
             raise AuthForbidden('social_core.backends.vk.VKOAuth2')
         user.age = age
+
+    if data['photo_100']:
+        url = data['photo_100']
+        users_img_directory = 'users_img'
+        filename = str(data['id'])  # + '.jpg'
+        destination = os.path.join(MEDIA_ROOT, users_img_directory, filename)
+        urlretrieve(url, destination)
+        img_path = os.path.join(users_img_directory, filename)
+        user.image = img_path
 
     user.save()
