@@ -35,9 +35,19 @@ class UserProfile(models.Model):
         (FEMALE, 'Ж'),
     )
 
+    ENGLISH = 'en'
+    RUSSIAN = 'ru'
+
+    LANGUAGE_CHOICES = (
+        (ENGLISH, 'english'),
+        (RUSSIAN, 'русский')
+    )
+
     user = models.OneToOneField(User, unique=True, null=False, on_delete=models.CASCADE, db_index=True)
     gender = models.CharField(verbose_name='пол', max_length=1, blank=True, choices=GENDER_CHOICES)
     about = models.TextField(verbose_name='о себе', max_length=512, blank=True)
+    language = models.CharField(verbose_name='язык', max_length=2, blank=True, choices=LANGUAGE_CHOICES,
+                                default=RUSSIAN)
 
     @receiver(post_save, sender=User)
     def create_user_profile(sender, instance, created, **kwargs):
