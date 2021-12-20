@@ -172,7 +172,7 @@ SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
   'fields': 'id, name, email'
 }
 SOCIAL_AUTH_FACEBOOK_EXTRA_DATA = [
-    ('id', 'username'),
+    ('name', 'username'),
     ('email', 'email'),
 ]
 

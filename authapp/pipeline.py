@@ -12,11 +12,13 @@ from authapp.models import UserProfile
 from geekshop.settings import MEDIA_ROOT
 
 
-def save_avatar(url, filename):
+def save_avatar(url, user):
     users_img_directory = 'users_img'
-    destination = os.path.join(MEDIA_ROOT, users_img_directory, filename)
-    urlretrieve(url, destination)
+    filename = f'{user.pk}.jpg'
     img_path = os.path.join(users_img_directory, filename)
+    destination = os.path.join(MEDIA_ROOT, users_img_directory, filename)
+    if not os.path.exists(destination):
+        urlretrieve(url, destination)
     return img_path
 
 
@@ -60,8 +62,7 @@ def save_user_profile(backend, user, response, *args, **kwargs):
 
         if data['photo_100']:
             url = data['photo_100']
-            filename = str(data['id'])
-            user.image = save_avatar(url, filename)
+            user.image = save_avatar(url, user)
 
         user.save()
 
@@ -92,7 +93,6 @@ def save_user_profile(backend, user, response, *args, **kwargs):
 
         if data['picture']['data']['url']:
             url = data['picture']['data']['url']
-            filename = str(data['id'])
-            user.image = save_avatar(url, filename)
+            user.image = save_avatar(url, user)
 
         user.save()
