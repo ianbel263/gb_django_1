@@ -22,7 +22,8 @@ def update_widgets(fields):
         'password1': _('Password'),
         'password2': _('Confirm password'),
         'about': _('About yourself'),
-        'gender': _('Gender')
+        'gender': _('Gender'),
+        'language': _('Language')
     }
 
     placeholders = {
@@ -36,13 +37,15 @@ def update_widgets(fields):
         'password1': _('Enter password'),
         'password2': _('Confirm password'),
         'about': _('Tell about yourself'),
-        'gender': _('Gender')
+        'gender': _('Gender'),
+        'language': _('Language')
     }
 
     for name, field in fields.items():
+        no_padding_fields = ('gender', 'age', 'language')
         if name == 'image':
             field.widget.attrs['class'] = 'custom-file-input'
-        elif name == 'gender' or name == 'age':
+        elif name in no_padding_fields:
             field.widget.attrs['class'] = 'form-control'
         else:
             field.widget.attrs['class'] = 'form-control py-4'

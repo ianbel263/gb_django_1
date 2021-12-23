@@ -21,9 +21,12 @@
             </form>
         </div>
         <div class="form-control">
-            Войти через социальные сети:
-            <a href="{% url 'social:begin' 'vk-oauth2' %}?next=/">
+            <span class="mr-2">Войти через социальные сети:</span>
+            <a class="mr-2" href="{% url 'social:begin' 'vk-oauth2' %}?next=/">
                 <i class="fab fa-vk"></i>
+            </a>
+            <a href="{% url 'social:begin' 'facebook' %}?next=/">
+                <i class="fab fa-facebook"></i>
             </a>
         </div>
         <div class="card-footer text-center">
