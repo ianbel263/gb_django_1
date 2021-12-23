@@ -17,6 +17,7 @@ class OrderForm(forms.ModelForm):
 class OrderItemForm(forms.ModelForm):
     price = forms.CharField(label='цена', required=False)
 
+
     class Meta:
         model = OrderItem
         fields = '__all__'
@@ -25,3 +26,5 @@ class OrderItemForm(forms.ModelForm):
         super(OrderItemForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
             field.widget.attrs['class'] = 'form-control'
+
+

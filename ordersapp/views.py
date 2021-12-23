@@ -25,44 +25,46 @@ class OrderCreateView(CreateView):
     extra_context = {
         'title': 'GeekShop - создание заказа'
     }
+    formset = None
+    OrderFormSet = inlineformset_factory(Order, OrderItem, form=OrderItemForm, extra=1)
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user, is_active=True)
 
     def get_context_data(self, **kwargs):
-        context = super(OrderCreateView, self).get_context_data(**kwargs)
-        OrderFormSet = inlineformset_factory(Order, OrderItem, form=OrderItemForm, extra=1)
-        if self.request.POST:
-            formset = OrderFormSet(self.request.POST)
-        else:
-            baskets = Basket.objects.filter(user=self.request.user)
-            if baskets:
-                OrderFormSet = inlineformset_factory(Order, OrderItem, form=OrderItemForm, extra=baskets.count())
-                formset = OrderFormSet()
-                for i, form in enumerate(formset.forms):
-                    form.initial['product'] = baskets[i].product
-                    form.initial['quantity'] = baskets[i].quantity
-                    form.initial['price'] = baskets[i].total_price
-                baskets.delete()
-            else:
-                formset = OrderFormSet()
+        return super(OrderCreateView, self).get_context_data(order_items=self.formset, **kwargs)
 
-        context['order_items'] = formset
-        return context
+    def get(self, request, *args, **kwargs):
+        baskets = Basket.objects.filter(user=self.request.user)
+        if baskets:
+            self.OrderFormSet = inlineformset_factory(Order, OrderItem, form=OrderItemForm, extra=baskets.count())
+            self.formset = self.OrderFormSet()
+            for i, form in enumerate(self.formset.forms):
+                form.initial['product'] = baskets[i].product
+                form.initial['quantity'] = baskets[i].quantity
+                form.initial['price'] = baskets[i].total_price
+        else:
+            self.formset = self.OrderFormSet()
+
+        return super(OrderCreateView, self).get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.formset = self.OrderFormSet(self.request.POST)
+        return super(OrderCreateView, self).post(request, *args, **kwargs)
 
     def form_valid(self, form):
-        context = self.get_context_data()
-        order_items = context['order_items']
-
+        baskets = Basket.objects.filter(user=self.request.user)
         with transaction.atomic():
             form.instance.user = self.request.user
+            if baskets:
+                baskets.delete()
             self.object = form.save()
-            if order_items.is_valid():
-                order_items.instance = self.object
-                order_items.save()
+            if self.formset.is_valid():
+                self.formset.instance = self.object
+                self.formset.save()
             if self.object.total_price == 0:
                 self.object.delete()
-            return super(OrderCreateView, self).form_valid(form)
+        return super(OrderCreateView, self).form_valid(form)
 
 
 class OrderUpdateView(UpdateView):
