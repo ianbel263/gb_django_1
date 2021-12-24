@@ -40,6 +40,7 @@ class OrderCreateView(CreateView):
             self.OrderFormSet = inlineformset_factory(Order, OrderItem, form=OrderItemForm, extra=baskets.count())
             self.formset = self.OrderFormSet(
                 initial=[{
+                    'product_id': basket.product.pk,
                     'product': basket.product,
                     'quantity': basket.quantity,
                     'price': basket.total_price
@@ -89,6 +90,7 @@ class OrderUpdateView(UpdateView):
         self.formset = self.OrderFormSet(instance=self.object)
         for form in self.formset:
             if form.instance.pk:
+                form.initial['product_id'] = form.instance.product_id
                 form.initial['price'] = form.instance.total_price
         return super(OrderUpdateView, self).get(request, *args, **kwargs)
 

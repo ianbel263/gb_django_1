@@ -17,6 +17,7 @@ class OrderForm(forms.ModelForm):
 
 
 class OrderItemForm(forms.ModelForm):
+    product_id = forms.CharField(widget=forms.HiddenInput)
     price = forms.CharField(label='цена', required=False)
 
     class Meta:
