@@ -77,7 +77,7 @@ class Order {
             productIdEl: formsetRow.querySelector('input[name$=product_id]'),
             productEl: formsetRow.querySelector('select'),
             quantityEl: formsetRow.querySelector('input[type=number]'),
-            priceEl: formsetRow.querySelector('.td3').querySelector('span')
+            priceEl: formsetRow.querySelector('span[class$=price]')
         }
     }
 
