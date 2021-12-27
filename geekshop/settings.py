@@ -24,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-1$37z%k_hxr3u-!kl&^(duv7#uan=tmw4r&c)9m-00o0@zl&_h'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -86,10 +86,19 @@ WSGI_APPLICATION = 'geekshop.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+load_dotenv(BASE_DIR / '.env')
+
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': 'geekshop_db',
+        'ENGINE': 'django.db.backends.postgresql',
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': 'localhost'
     }
 }
 
@@ -140,8 +149,6 @@ AUTH_USER_MODEL = 'authapp.User'
 LOGIN_URL = 'authapp:login'
 LOGIN_REDIRECT_URL = 'index'
 LOGIN_ERROR_URL = 'index'
-
-load_dotenv(BASE_DIR / '.env')
 
 DOMAIN_NAME = 'http://localhost:8000'
 EMAIL_HOST = 'localhost'
