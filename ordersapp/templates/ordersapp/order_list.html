@@ -54,15 +54,11 @@
             </tbody>
         </table>
 
-        <button class="btn btn-light btn-round">
-            <a href="{% url 'index' %}">
-                на главную
-            </a>
-        </button>
-        <button class="btn btn-warning btn-round">
-            <a href="{% url 'ordersapp:create' %}">
-                новый
-            </a>
-        </button>
+        <a class="btn btn-light btn-round" href="{% url 'index' %}">
+            на главную
+        </a>
+        <a class="btn btn-warning btn-round" href="{% url 'ordersapp:create' %}">
+            новый
+        </a>
     </div>
 {% endblock %}
