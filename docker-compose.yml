@@ -1,25 +1,31 @@
-version: '3.7'
+version: '3.9'
 services:
   web:
+    container_name: geekshop_web
     build: .
-    command: python3 manage.py runserver 0.0.0.0:8000
+    command: gunicorn geekshop.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - .:/usr/src/app/
     ports:
-      - 8000:8000
+      - "8000:8000"
+    restart: unless-stopped
     env_file:
       - ./.env
+    depends_on:
+      - db
 
   db:
+    container_name: geekshop_db
     image: postgres:12.0-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+    restart: unless-stopped
     environment:
       - POSTGRES_USER=django
       - POSTGRES_PASSWORD=swnozard3
       - POSTGRES_DB=geekshop_db
     ports:
-      - 5432:5432
+      - "5432:5432"
 
 volumes:
   postgres_data:
