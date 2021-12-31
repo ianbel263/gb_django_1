@@ -1,4 +1,6 @@
 # Create your views here.
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.forms import inlineformset_factory
 from django.http import HttpResponseRedirect
@@ -11,14 +13,14 @@ from ordersapp.forms import OrderItemForm
 from ordersapp.models import Order, OrderItem
 
 
-class OrderList(ListView):
+class OrderList(LoginRequiredMixin, ListView):
     model = Order
     extra_context = {
         'title': 'GeekShop - все заказы'
     }
 
 
-class OrderCreateView(CreateView):
+class OrderCreateView(LoginRequiredMixin, CreateView):
     model = Order
     fields = []
     success_url = reverse_lazy('ordersapp:list')
@@ -26,7 +28,7 @@ class OrderCreateView(CreateView):
         'title': 'GeekShop - создание заказа'
     }
     formset = None
-    OrderFormSet = inlineformset_factory(Order, OrderItem, form=OrderItemForm, extra=1)
+    OrderFormSet = inlineformset_factory(Order, OrderItem, form=OrderItemForm, extra=0)
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user, is_active=True)
@@ -41,7 +43,7 @@ class OrderCreateView(CreateView):
             self.formset = self.OrderFormSet(
                 initial=[{
                     'product_id': basket.product.pk,
-                    'product': basket.product,
+                    'product_name': basket.product.name,
                     'quantity': basket.quantity,
                     'price': basket.total_price
                 } for basket in baskets])
@@ -69,7 +71,7 @@ class OrderCreateView(CreateView):
         return super(OrderCreateView, self).form_valid(form)
 
 
-class OrderUpdateView(UpdateView):
+class OrderUpdateView(LoginRequiredMixin, UpdateView):
     model = Order
     fields = []
     success_url = reverse_lazy('ordersapp:list')
@@ -77,7 +79,7 @@ class OrderUpdateView(UpdateView):
         'title': 'GeekShop - редактирование заказа'
     }
     formset = None
-    OrderFormSet = inlineformset_factory(Order, OrderItem, form=OrderItemForm, extra=1)
+    OrderFormSet = inlineformset_factory(Order, OrderItem, form=OrderItemForm, extra=0)
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user, is_active=True)
@@ -91,6 +93,7 @@ class OrderUpdateView(UpdateView):
         for form in self.formset:
             if form.instance.pk:
                 form.initial['product_id'] = form.instance.product_id
+                form.initial['product_name'] = form.instance.product.name
                 form.initial['price'] = form.instance.total_price
         return super(OrderUpdateView, self).get(request, *args, **kwargs)
 
@@ -112,7 +115,7 @@ class OrderUpdateView(UpdateView):
             return super(OrderUpdateView, self).form_valid(form)
 
 
-class OrderDeleteView(DeleteView):
+class OrderDeleteView(LoginRequiredMixin, DeleteView):
     model = Order
     success_url = reverse_lazy('ordersapp:list')
     extra_context = {
@@ -120,13 +123,14 @@ class OrderDeleteView(DeleteView):
     }
 
 
-class OrderDetailView(DetailView):
+class OrderDetailView(LoginRequiredMixin, DetailView):
     model = Order
     extra_context = {
         'title': 'GeekShop - просмотр заказа'
     }
 
 
+@login_required
 def order_forming_complete(request, pk):
     order = get_object_or_404(Order, pk=pk)
     order.status = Order.SEND_TO_PROCEED
