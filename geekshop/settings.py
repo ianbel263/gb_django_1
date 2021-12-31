@@ -16,20 +16,20 @@ from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / '.env')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-1$37z%k_hxr3u-!kl&^(duv7#uan=tmw4r&c)9m-00o0@zl&_h'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG')
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(' ')
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -87,9 +87,17 @@ WSGI_APPLICATION = 'geekshop.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': 'geekshop_db',
+        'ENGINE': 'django.db.backends.postgresql',
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': 'localhost',
+        'PORT': os.getenv('DB_PORT')
     }
 }
 
@@ -140,8 +148,6 @@ AUTH_USER_MODEL = 'authapp.User'
 LOGIN_URL = 'authapp:login'
 LOGIN_REDIRECT_URL = 'index'
 LOGIN_ERROR_URL = 'index'
-
-load_dotenv(BASE_DIR / '.env')
 
 DOMAIN_NAME = 'http://localhost:8000'
 EMAIL_HOST = 'localhost'
