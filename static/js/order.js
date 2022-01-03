@@ -42,26 +42,23 @@ class Order {
     _findProducts(formsetRow) {
         const elements = this._getRowElements(formsetRow)
         const {productIdEl, productEl, quantityEl, _} = elements
-        if (productEl.options.selectedIndex !== 0) {
-            this.products.push({
-                id: productIdEl.value,
-                quantity: parseInt(quantityEl.value),
-                pricePerOne: this._getPricePerOne(elements)
-            });
-        }
+
+        this.products.push({
+            id: productIdEl.value,
+            quantity: parseInt(quantityEl.value),
+            pricePerOne: this._getPricePerOne(elements)
+        });
     }
 
     _addListeners(formsetRow) {
         const elements = this._getRowElements(formsetRow)
         const {productIdEl, productEl, quantityEl, priceEl} = elements
-        if (productEl.options.selectedIndex !== 0) {
-            const pricePerOne = this._getPricePerOne(elements)
-            quantityEl.addEventListener('change', evt => {
-                this._onQuantityChange(evt, pricePerOne, priceEl);
-                this._updateProducts(productIdEl.value, +quantityEl.value, pricePerOne);
-                this._updateSummary();
-            });
-        }
+        const pricePerOne = this._getPricePerOne(elements)
+        quantityEl.addEventListener('change', evt => {
+            this._onQuantityChange(evt, pricePerOne, priceEl);
+            this._updateProducts(productIdEl.value, +quantityEl.value, pricePerOne);
+            this._updateSummary();
+        });
     }
 
     _onQuantityChange(evt, pricePerOne, priceEl) {
@@ -75,7 +72,7 @@ class Order {
     _getRowElements(formsetRow) {
         return {
             productIdEl: formsetRow.querySelector('input[name$=product_id]'),
-            productEl: formsetRow.querySelector('select'),
+            productEl: formsetRow.querySelector('input[name$=product_name]'),
             quantityEl: formsetRow.querySelector('input[type=number]'),
             priceEl: formsetRow.querySelector('span[class$=price]')
         }
