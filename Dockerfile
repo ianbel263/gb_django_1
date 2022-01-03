@@ -67,4 +67,4 @@ RUN chown -R django:www-data $APP_HOME
 # изменение рабочего пользователя
 USER django
 
-ENTRYPOINT ["/home/django/web/entrypoint.prod.sh"]
+#ENTRYPOINT ["/home/django/web/entrypoint.prod.sh"]
