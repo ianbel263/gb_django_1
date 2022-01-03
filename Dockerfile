@@ -2,16 +2,17 @@
 # BUILDER #
 ###########
 
-FROM python:3.9.6-alpine as builder
+FROM python:3.9.6-slim as builder
 
 WORKDIR /usr/src/app
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# установка зависимостей
-#RUN apk update
-#    && apk add postgresql-dev gcc python3-dev musl-dev
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN pip install --upgrade pip
 
@@ -25,26 +26,34 @@ COPY . .
 # FINAL #
 #########
 
-FROM python:3.9.6-alpine
+FROM python:3.9.6-slim
 
 # создаем директорию для пользователя
 RUN mkdir -p /home/django
 
 # создаем отдельного пользователя
-RUN adduser -S django -G www-data
+RUN useradd -g www-data -m django
+#RUN adduser -S django -G www-data
 
 # создание каталога для приложения
 ENV HOME=/home/django
 ENV APP_HOME=/home/django/web
 RUN mkdir $APP_HOME
+RUN mkdir $APP_HOME/static
+RUN mkdir $APP_HOME/media
 WORKDIR $APP_HOME
 
 # установка зависимостей и копирование из builder
-#RUN apk update
-#  && apk add libpq
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY --from=builder /usr/src/app/wheels ./wheels
 COPY --from=builder /usr/src/app/requirements.txt .
-RUN pip install --no-cache /wheels/*
+RUN pip install --upgrade pip
+#RUN pip install --no-cache /wheels/*
+RUN pip install -r requirements.txt
 
 # копирование entrypoint-prod.sh
 COPY ./entrypoint.prod.sh $APP_HOME
@@ -58,4 +67,4 @@ RUN chown -R django:www-data $APP_HOME
 # изменение рабочего пользователя
 USER django
 
-ENTRYPOINT ["/home/app/web/entrypoint.prod.sh"]
+ENTRYPOINT ["/home/django/web/entrypoint.prod.sh"]

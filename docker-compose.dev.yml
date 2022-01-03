@@ -8,5 +8,9 @@ services:
     env_file:
       - ./.env.dev
 
+  nginx:
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf
+
 volumes:
   postgres_data:
