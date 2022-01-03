@@ -107,6 +107,9 @@ class AdminProductsListView(ProtectDispatchMixin, ListView):
     extra_context = {'title': titles['admin_product'].get('read')}
     template_name = 'adminapp/products.html'
 
+    def get_queryset(self):
+        return Product.objects.select_related()
+
 
 class AdminProductCreateView(SuccessMessageMixin, ProtectDispatchMixin, CreateView):
     model = Product
