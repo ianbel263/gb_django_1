@@ -6,3 +6,5 @@ fixtures
 .env
 .env.dev
 tmp/
+geekshop_urls.txt
+db.png
