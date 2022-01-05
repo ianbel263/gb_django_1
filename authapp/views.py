@@ -62,7 +62,8 @@ class UserCreateView(SuccessMessageMixin, CreateView):
     def send_verify_link(user):
         verify_link = reverse_lazy('authapp:verify', args=[user.email, user.activation_key])
         subject = f'Для активации учетной записи {user.username} пройдите по ссылке'
-        message = f'Для подтверждения учетной записи {user.username} на портале {settings.DOMAIN_NAME}\nпройдите по ссылке: {settings.DOMAIN_NAME}{verify_link}'
+        message = f'Для подтверждения учетной записи {user.username} ' \
+                  f'на портале {settings.DOMAIN_NAME}\nпройдите по ссылке: {settings.DOMAIN_NAME}{verify_link}'
         return send_mail(subject, message, settings.EMAIL_HOST_USER, [user.email], fail_silently=False)
 
     def verify(self, email, activation_key):

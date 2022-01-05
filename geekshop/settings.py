@@ -150,7 +150,7 @@ LOGIN_URL = 'authapp:login'
 LOGIN_REDIRECT_URL = 'index'
 LOGIN_ERROR_URL = 'index'
 
-DOMAIN_NAME = 'ianbel.ru'
+DOMAIN_NAME = 'http://ianbel.ru'
 EMAIL_HOST = os.getenv('EMAIL_HOST')
 EMAIL_PORT = int(os.getenv('EMAIL_PORT'))
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
