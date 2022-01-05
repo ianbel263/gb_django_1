@@ -25,7 +25,7 @@ load_dotenv(BASE_DIR / '.env')
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True if os.getenv('DEBUG') == 1 else False
+DEBUG = True if int(os.getenv('DEBUG')) == 1 else False
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS').split(' ')
 
 # Application definition
@@ -150,15 +150,15 @@ LOGIN_URL = 'authapp:login'
 LOGIN_REDIRECT_URL = 'index'
 LOGIN_ERROR_URL = 'index'
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 DOMAIN_NAME = 'http://ianbel.ru'
 EMAIL_HOST = os.getenv('EMAIL_HOST')
 EMAIL_PORT = int(os.getenv('EMAIL_PORT'))
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-EMAIL_USE_TLS = True if os.getenv('EMAIL_USE_TLS') == 1 else False
-EMAIL_USE_SSL = True if os.getenv('EMAIL_USE_SSL') == 1 else False
+EMAIL_USE_TLS = True if int(os.getenv('EMAIL_USE_TLS')) == 1 else False
+EMAIL_USE_SSL = True if int(os.getenv('EMAIL_USE_SSL')) == 1 else False
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 # EMAIL_FILE_PATH = 'tmp/emails'
 
