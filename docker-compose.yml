@@ -7,7 +7,7 @@ services:
     expose:
       - 8000
     environment:
-      VIRTUAL_HOST: geekshop.ianbel.ru
+      VIRTUAL_HOST: ianbel.ru
     volumes:
       - static_volume:/home/django/web/static
       - media_volume:/home/django/web/media
