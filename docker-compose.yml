@@ -35,7 +35,11 @@ services:
 volumes:
   postgres_data:
   static_volume:
+    external:
+      name: static
   media_volume:
+    external:
+      name: media
 
 networks:
   default:
