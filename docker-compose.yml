@@ -11,7 +11,7 @@ services:
       - media_volume:/home/django/web/media
     restart: unless-stopped
     env_file:
-      - /home/ianbel/geekshop/.env
+      - ./.env
     depends_on:
       - db
     networks:
