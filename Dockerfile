@@ -22,10 +22,17 @@ RUN apt-get update \
     && apt-get install -y libmemcached-dev \
     && rm -rf /var/lib/apt/lists/*
 
-RUN sudo -H pip install --upgrade pip
+# изменение прав для пользователя app
+RUN chown -R django:www-data $APP_HOME
+
+# изменение рабочего пользователя
+USER django
+
+# установка зависимостей
+RUN pip install --upgrade pip
 COPY ./requirements.txt $APP_HOME
-RUN sudo -H pip install -r requirements.txt
-RUN sudo -H pip install python-memcached
+RUN pip install -r requirements.txt
+RUN pip install python-memcached
 
 #memcached
 COPY ./memcached.conf /etc/memcached.conf
@@ -33,8 +40,3 @@ COPY ./memcached.conf /etc/memcached.conf
 # копирование проекта Django
 COPY . $APP_HOME
 
-# изменение прав для пользователя app
-RUN chown -R django:www-data $APP_HOME
-
-# изменение рабочего пользователя
-USER django
