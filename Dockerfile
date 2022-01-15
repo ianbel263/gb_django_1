@@ -25,9 +25,6 @@ COPY ./requirements.txt $APP_HOME
 RUN pip install -r requirements.txt
 RUN pip install python-memcached
 
-#memcached
-COPY ./memcached.conf /etc/memcached.conf
-
 # копирование проекта Django
 COPY . $APP_HOME
 
