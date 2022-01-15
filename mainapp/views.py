@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.core.cache import cache
 from django.core.paginator import Paginator
 from django.views.generic import TemplateView, ListView, DetailView
 
@@ -11,12 +13,23 @@ class IndexTemplateView(TemplateView):
 
 class ProductsListView(ListView):
     model = Product
-    queryset = Product.objects.filter(is_active=True)
+    # queryset = Product.objects.filter(is_active=True)
     category_pk = None
     template_name = 'mainapp/products.html'
     context_object_name = 'products'
     paginate_by = 6
     page_kwarg = 'page_number'
+
+    def get_queryset(self):
+        if settings.LOW_CACHE:
+            key = 'links_menu'
+            links_menu = cache.get(key)
+            if links_menu is None:
+                links_menu = Product.objects.filter(is_active=True)
+                cache.set(key, links_menu)
+            return links_menu
+        else:
+            return Product.objects.filter(is_active=True)
 
     def get_context_data(self, **kwargs):
         self.category_pk = self.kwargs.get('category_pk')
