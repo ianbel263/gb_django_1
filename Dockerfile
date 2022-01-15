@@ -22,10 +22,10 @@ RUN apt-get update \
     && apt-get install -y libmemcached-dev \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install --upgrade pip
+RUN sudo -H pip install --upgrade pip
 COPY ./requirements.txt $APP_HOME
-RUN pip install -r requirements.txt
-RUN pip install python-memcached
+RUN sudo -H pip install -r requirements.txt
+RUN sudo -H pip install python-memcached
 
 #memcached
 COPY ./memcached.conf /etc/memcached.conf
