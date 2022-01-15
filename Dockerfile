@@ -18,11 +18,17 @@ WORKDIR $APP_HOME
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         postgresql-client \
+        memcached \
+        libmemcached-dev
     && rm -rf /var/lib/apt/lists/*
 
 RUN pip install --upgrade pip
 COPY ./requirements.txt $APP_HOME
 RUN pip install -r requirements.txt
+RUN pip install python-memcached
+
+#memcached
+COPY ./memcached.conf /etc/memcached.conf
 
 # копирование проекта Django
 COPY . $APP_HOME
