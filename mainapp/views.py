@@ -40,9 +40,9 @@ class ProductsListView(ListView):
                 key = f'category_{self.category_pk}'
                 category = cache.get(key)
                 if category is None:
-                    links_menu = Product.objects.filter(is_active=True, category=self.category_pk)
-                    cache.set(key, links_menu)
-                return category
+                    category = Product.objects.filter(is_active=True, category=self.category_pk)
+                    cache.set(key, category)
+                self.queryset = category
             else:
                 self.queryset = Product.objects.filter(is_active=True, category=self.category_pk)
 
