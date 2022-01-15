@@ -1,6 +1,6 @@
 from django.db import models
+from django.utils.functional import cached_property
 
-# Create your models here.
 from authapp.models import User
 from mainapp.models import Product
 
@@ -26,7 +26,7 @@ class Basket(models.Model):
         return f'Корзина пользователя {self.user} - товар: {self.product}'
 
     def _get_user_baskets(self):
-        return Basket.objects.filter(user=self.user)
+        return Basket.objects.filter(user=self.user).select_related()
 
     @staticmethod
     def get_item(pk):
