@@ -18,17 +18,8 @@ WORKDIR $APP_HOME
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         postgresql-client \
-    && apt-get install -y memcached \
-    && apt-get install -y libmemcached-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# изменение прав для пользователя app
-RUN chown -R django:www-data $APP_HOME
-
-# изменение рабочего пользователя
-USER django
-
-# установка зависимостей
 RUN pip install --upgrade pip
 COPY ./requirements.txt $APP_HOME
 RUN pip install -r requirements.txt
@@ -40,3 +31,8 @@ COPY ./memcached.conf /etc/memcached.conf
 # копирование проекта Django
 COPY . $APP_HOME
 
+# изменение прав для пользователя app
+RUN chown -R django:www-data $APP_HOME
+
+# изменение рабочего пользователя
+USER django
