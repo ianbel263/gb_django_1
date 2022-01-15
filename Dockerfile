@@ -20,7 +20,7 @@ RUN apt-get update \
         postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
-RUN apt install memcached libmemcached-dev
+RUN apt-get install memcached libmemcached-dev
 
 RUN pip install --upgrade pip
 COPY ./requirements.txt $APP_HOME
