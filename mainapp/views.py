@@ -28,13 +28,6 @@ class ProductsListView(ListView):
                 links_menu = Product.objects.filter(is_active=True)
                 cache.set(key, links_menu)
             return links_menu
-        elif settings.LOW_CACHE and self.category_pk is not None:
-            key = f'category_{self.category_pk}'
-            category = cache.get(key)
-            if category is None:
-                links_menu = Product.objects.filter(is_active=True, category=self.category_pk)
-                cache.set(key, links_menu)
-            return category
         else:
             return Product.objects.filter(is_active=True)
 
@@ -42,8 +35,16 @@ class ProductsListView(ListView):
         self.category_pk = self.kwargs.get('category_pk')
         title = 'GeekShop - Каталог'
         if self.category_pk:
-            # self.queryset = Product.objects.filter(is_active=True, category=self.category_pk)
             title = f'GeekShop - Каталог|{Category.objects.get(pk=self.category_pk).name}'
+            if settings.LOW_CACHE:
+                key = f'category_{self.category_pk}'
+                category = cache.get(key)
+                if category is None:
+                    links_menu = Product.objects.filter(is_active=True, category=self.category_pk)
+                    cache.set(key, links_menu)
+                return category
+            else:
+                self.queryset = Product.objects.filter(is_active=True, category=self.category_pk)
 
         context = super(ProductsListView, self).get_context_data(object_list=self.queryset, **kwargs)
         if self.paginate_by:
