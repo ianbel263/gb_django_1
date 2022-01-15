@@ -33,12 +33,19 @@ if IS_LOCAL:
 else:
     ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS').split(' ')
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': 'cache:11211',
+if os.name == 'posix':
+    CACHE_MIDDLEWARE_ALIAS = 'default'
+    CACHE_MIDDLEWARE_SECONDS = 120
+    CACHE_MIDDLEWARE_KEY_PREFIX = 'geekshop'
+
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+            'LOCATION': 'geekshop_memcached:11211',
+        }
     }
-}
+
+LOW_CACHE = True
 
 # Application definition
 INSTALLED_APPS = [
@@ -73,6 +80,7 @@ MIDDLEWARE = [
 if DEBUG:
     def show_toolbar(request):
         return True
+
 
     INSTALLED_APPS += ['debug_toolbar', 'template_profiler_panel']
     MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']

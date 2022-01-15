@@ -34,6 +34,7 @@ services:
       - default
 
   cache:
+    container_name: geekshop_memcached
     image: memcached
     ports:
       - "11211:11211"
