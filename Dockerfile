@@ -18,10 +18,8 @@ WORKDIR $APP_HOME
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         postgresql-client \
+    && apt-get install memcached libmemcached-dev \
     && rm -rf /var/lib/apt/lists/*
-
-RUN apt-get install -y --no-install-recommends memcached
-RUN apt-get install -y --no-install-recommends libmemcached-dev
 
 RUN pip install --upgrade pip
 COPY ./requirements.txt $APP_HOME
