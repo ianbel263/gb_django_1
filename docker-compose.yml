@@ -14,6 +14,7 @@ services:
       - ./.env
     depends_on:
       - db
+      - cache
     networks:
       - default
 
@@ -31,6 +32,18 @@ services:
       - "5432:5432"
     networks:
       - default
+
+  cache:
+    image: memcached
+    ports:
+      - "11211:11211"
+    restart: unless-stopped
+    entrypoint:
+      - memcached
+      - -m 256
+    networks:
+      - default
+
 
 volumes:
   postgres_data:
