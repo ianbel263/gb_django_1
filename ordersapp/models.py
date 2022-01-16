@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.db import models
+from django.db import models, transaction
 
 # Create your models here.
 from mainapp.models import Product
@@ -44,6 +44,7 @@ class Order(models.Model):
     def get_items(self):
         pass
 
+    @transaction.atomic
     def delete(self, using=None, keep_parents=False):
         for item in self.order_items.select_related():
             item.product.quantity += item.quantity
@@ -65,6 +66,7 @@ class OrderItem(models.Model):
     def get_item(pk):
         return OrderItem.objects.get(pk=pk)
 
+    @transaction.atomic
     def save(self, *args, **kwargs):
         if self.pk:
             self.product.quantity -= self.quantity - self.__class__.get_item(self.pk).quantity

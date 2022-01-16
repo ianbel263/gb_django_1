@@ -65,6 +65,7 @@ class OrderCreateView(LoginRequiredMixin, CreateView):
         baskets = Basket.objects.filter(user=self.request.user)
         with transaction.atomic():
             form.instance.user = self.request.user
+            form.instance.is_active = True
             if baskets:
                 baskets.delete()
             self.object = form.save()
