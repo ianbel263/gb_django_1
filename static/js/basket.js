@@ -14,7 +14,21 @@ const RequestMethod = {
 const Urls = {
     ADD: '/basket/add/',
     UPDATE: '/basket/update/'
-}
+};
+
+const debounce = (f, ms) => {
+  let timer = null;
+  return function (...args) {
+    const onComplete = () => {
+      f.apply(this, args);
+      timer = null;
+    }
+    if (timer) {
+      clearTimeout(timer);
+    }
+    timer = setTimeout(onComplete, ms);
+  };
+};
 
 const checkStatus = (response) => {
     if (response.status >= 200 && response.status < 300) {
@@ -33,7 +47,7 @@ const load = ({url, method = RequestMethod.GET, body = null, headers = new Heade
         .catch((err) => {
             throw err;
         });
-}
+};
 
 const onAddBasketLinkClick = (evt) => {
     evt.preventDefault();
@@ -85,12 +99,16 @@ const onProductQuantityChange = (evt, elements) => {
     })
         .then(response => response.json())
         .then((data) => {
+            evt.target.defaultValue = data.quantity;
             evt.target.value = data.quantity;
             priceEl.textContent = `${data.price} руб.`;
             totalPriceEl.textContent = `${data.totalPrice} руб.`;
             totalQuantityEl.textContent = data.totalQuantity;
         })
-        .catch(error => console.log(error));
+        .catch((error) => {
+            evt.target.value = evt.target.defaultValue;
+            alert(`Вы превышаете остаток товара в магазине.`);
+        })
 }
 
 const addBasketLinks = document.querySelectorAll('#add_basket');
@@ -100,6 +118,8 @@ if (addBasketLinks) {
     });
 }
 
+const debouncedProductChange = debounce(onProductQuantityChange, 500);
+
 const basket = document.querySelector('#basket')
 if (basket) {
     const elements = {
@@ -108,9 +128,7 @@ if (basket) {
     }
     const quantityFields = basket.querySelectorAll('input[name="basketID"]');
     quantityFields.forEach(field => {
-        field.addEventListener('change', (evt) => {
-            elements.priceEl = field.parentNode.parentNode.querySelector('#price')
-            onProductQuantityChange(evt, elements);
-        })
+        elements.priceEl = field.parentNode.parentNode.querySelector('#price');
+        field.addEventListener('change', (evt) => debouncedProductChange(evt, elements));
     });
 }
