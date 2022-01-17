@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, transaction, IntegrityError
 
 # Create your models here.
 from authapp.models import User
@@ -32,6 +32,7 @@ class Basket(models.Model):
     def get_item(pk):
         return Basket.objects.get(pk=pk)
 
+    @transaction.atomic
     def save(self, *args, **kwargs):
         if self.pk:
             self.product.quantity -= self.quantity - self.__class__.get_item(self.pk).quantity
@@ -40,6 +41,7 @@ class Basket(models.Model):
         self.product.save()
         super(self.__class__, self).save(*args, **kwargs)
 
+    @transaction.atomic
     def delete(self, *args, **kwargs):
         self.product.quantity += self.quantity
         self.product.save()

@@ -1,7 +1,8 @@
 # Create your views here.
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db import transaction
+from django.contrib.messages.views import SuccessMessageMixin
+from django.db import transaction, IntegrityError
 from django.forms import inlineformset_factory
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -63,18 +64,22 @@ class OrderCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         baskets = Basket.objects.filter(user=self.request.user)
-        with transaction.atomic():
-            form.instance.user = self.request.user
-            form.instance.is_active = True
-            if baskets:
-                baskets.delete()
-            self.object = form.save()
-            if self.formset.is_valid():
-                self.formset.instance = self.object
-                self.formset.save()
-            if self.object.total_price == 0:
-                self.object.delete()
-        return super(OrderCreateView, self).form_valid(form)
+        try:
+            with transaction.atomic():
+                form.instance.user = self.request.user
+                form.instance.is_active = True
+                if baskets:
+                    baskets.delete()
+                self.object = form.save()
+                if self.formset.is_valid():
+                    self.formset.instance = self.object
+                    self.formset.save()
+                if self.object.total_price == 0:
+                    self.object.delete()
+        except IntegrityError:
+            return HttpResponseRedirect(reverse_lazy('ordersapp:create'))
+        else:
+            return super(OrderCreateView, self).form_valid(form)
 
 
 class OrderUpdateView(LoginRequiredMixin, UpdateView):
@@ -92,7 +97,9 @@ class OrderUpdateView(LoginRequiredMixin, UpdateView):
         return Order.objects.filter(user=self.request.user, is_active=True)
 
     def get_context_data(self, **kwargs):
-        return super(OrderUpdateView, self).get_context_data(order_items=self.formset, **kwargs)
+        context = super(OrderUpdateView, self).get_context_data(**kwargs)
+        context['order_items'] = self.formset
+        return context
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -112,13 +119,16 @@ class OrderUpdateView(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         context = self.get_context_data()
         order_items = context['order_items']
-
-        with transaction.atomic():
-            if order_items.is_valid():
-                order_items.instance = self.object
-                order_items.save()
-            if self.object.total_price == 0:
-                self.object.delete()
+        try:
+            with transaction.atomic():
+                if order_items.is_valid():
+                    order_items.instance = self.object
+                    order_items.save()
+                if self.object.total_price == 0:
+                    self.object.delete()
+        except IntegrityError:
+            return HttpResponseRedirect(reverse_lazy('ordersapp:update', kwargs={'pk': self.kwargs.get('pk')}))
+        else:
             return super(OrderUpdateView, self).form_valid(form)
 
 

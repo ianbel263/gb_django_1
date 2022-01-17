@@ -19,6 +19,12 @@ class OrderForm(forms.ModelForm):
         for field in self.fields.values():
             field.widget.attrs['class'] = 'form-control'
 
+    # def clean_order_items(self):
+    #     data = self.cleaned_data['order_items']
+    #     if len(data) == 0:
+    #         raise forms.ValidationError("You have forgotten about Fred!")
+    #     return data
+
 
 class OrderItemForm(forms.ModelForm):
     product_id = forms.CharField(widget=forms.HiddenInput)

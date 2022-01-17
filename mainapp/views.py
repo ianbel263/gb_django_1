@@ -11,7 +11,7 @@ class IndexTemplateView(TemplateView):
 
 class ProductsListView(ListView):
     model = Product
-    queryset = Product.objects.filter(is_active=True)
+    queryset = Product.objects.filter(is_active=True, quantity__gt=0)
     category_pk = None
     template_name = 'mainapp/products.html'
     context_object_name = 'products'
@@ -22,7 +22,7 @@ class ProductsListView(ListView):
         self.category_pk = self.kwargs.get('category_pk')
         title = 'GeekShop - Каталог'
         if self.category_pk:
-            self.queryset = Product.objects.filter(is_active=True, category=self.category_pk)
+            self.queryset = Product.objects.filter(is_active=True, category=self.category_pk, quantity__gt=0)
             title = f'GeekShop - Каталог|{Category.objects.get(pk=self.category_pk).name}'
 
         context = super(ProductsListView, self).get_context_data(object_list=self.queryset, **kwargs)
